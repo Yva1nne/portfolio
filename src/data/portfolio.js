@@ -1,0 +1,229 @@
+export const profile = {
+  name: '叶奕含',
+  direction: 'AI / DATABASE PRODUCT MANAGER',
+  edition: 'Portfolio · 2026',
+  headline: '把复杂问题，拆成可以被验证的产品系统。',
+  introduction: [
+    '我享受从复杂、抽象的问题里拆出清晰的用户任务、业务链路和产品方案。能写 Prompt、画原型，也会自己动手写代码验证想法——不是为了证明什么都会，而是不想让判断只停留在“我觉得”。',
+    '我相信好的 AI 产品不是为了把 AI 塞进流程，而是先定义问题、拆解场景，再决定哪些交给模型，哪些必须由确定性流程、数据和评估兜底。',
+    '现在，我在阿里云数据库团队做产品经理实习，继续把这套方法放进更复杂、更真实的产品与运维场景里。',
+  ],
+  meta: [
+    { label: 'EDUCATION', value: '浙江大学 · 电子信息硕士（2027）' },
+    { label: 'BASE', value: '杭州' },
+    { label: 'EMAIL', value: 'yhye@zju.edu.cn', href: 'mailto:yhye@zju.edu.cn' },
+    { label: 'GITHUB', value: 'github.com/yva1nne', href: 'https://github.com/yva1nne' },
+  ],
+}
+
+export const capabilities = [
+  {
+    id: 'product',
+    number: '01',
+    label: 'PRODUCT JUDGMENT',
+    keywords: '问题定义、场景拆解、PRD、原型、需求优先级。',
+    evidence: '把“想做一个 AI 功能”转成明确用户、任务链路、边界与验收方式。',
+  },
+  {
+    id: 'agent',
+    number: '02',
+    label: 'AGENT & WORKFLOW',
+    keywords: 'Prompt、Skills、Agent、Workflow、AG-UI、记忆与评估。',
+    evidence: '判断模型自由度与确定性流程的边界，并通过 badcase 和回归持续优化。',
+  },
+  {
+    id: 'engineering',
+    number: '03',
+    label: 'AI & ENGINEERING',
+    keywords: 'Python、PyTorch、CV、API 集成、Docker。',
+    evidence: '能够读懂系统与模型约束，也能做出可运行原型验证产品判断。',
+  },
+  {
+    id: 'prototype',
+    number: '04',
+    label: 'PROTOTYPE & FRONTEND',
+    keywords: 'Vue、JavaScript、Figma、Axure、Git、Vibe Coding。',
+    evidence: '把需求快速变成可体验、可讨论、可测试的界面，而不是停在文档。',
+  },
+]
+
+export const timelineItems = [
+  {
+    id: 'bachelor',
+    year: '2020',
+    date: '2020.09 — 2024.06',
+    title: '浙江大学 · 本科',
+    role: '电子科学与技术',
+    summary: '建立电子信息与工程技术基础。',
+    evidence: [],
+  },
+  {
+    id: 'master',
+    year: '2024',
+    date: '2024.09 — 至今',
+    title: '浙江大学 · 硕士',
+    role: '电子信息',
+    summary: '研究与项目逐步从算法验证延伸到产品定义、系统集成与真实场景应用。',
+    evidence: [],
+    current: true,
+  },
+  {
+    id: 'defect',
+    year: '2024',
+    date: '2024.09 — 2025.07',
+    title: '智能缺陷分析系统',
+    role: '产品 + 核心开发成员',
+    summary: '面向半导体产线 YE 工程师 RCA 阶段，整合分类、分割、语义和根因检索。',
+    evidence: [
+      '主责 DRNet 根因检索、GUI 搭建与系统集成。',
+      '检索模块 Rank-1 准确率 96.2%，单次检索时延 0.03s。',
+    ],
+    projectId: 'defect',
+  },
+  {
+    id: 'eda',
+    year: '2025',
+    date: '2025.08 — 2025.12',
+    title: '基于 AI 的跨工艺集成电路行为建模',
+    role: '核心开发成员',
+    summary: '参与跨工艺参数推演与工程化交付，项目获创“芯”大赛 EDA 精英挑战赛全国三等奖。',
+    evidence: [],
+  },
+  {
+    id: 'ganttodo',
+    year: '2025',
+    date: '2025.09 — 2025.12',
+    title: 'Smart Ganttodo',
+    role: 'AI 产品经理 / 独立开发',
+    summary: '验证自然语言多意图解析、结构化 actions、甘特图状态与拖拽修正的个人任务规划链路。',
+    evidence: [],
+    projectId: 'ganttodo',
+  },
+  {
+    id: 'zhipu',
+    year: '2025',
+    date: '2025.12 — 2026.05',
+    title: '智谱华章 · AI 产品经理实习',
+    role: 'AI 产品经理实习生',
+    summary: '把复杂 ToB AI 项目中的分散材料、展示目标和自然语言交互需求，组织成可讲、可演、可追问的 LLM-driven workflow。',
+    evidence: [
+      '主导 5 个大屏、14 个页面的展示方案、内容组织与演示脚本。',
+      '设计智能中控、智能讲解、智能问答三类能力。',
+    ],
+    projectId: 'zhipu',
+  },
+  {
+    id: 'aliyun',
+    year: '2026',
+    date: '2026.06 — 至今',
+    title: '阿里云 · 数据库产品经理实习',
+    role: '数据库产品经理实习生',
+    summary: '围绕数据库 AI 助手与内部运维 AI 助手，推进功能设计、Skills 优化、测试迭代、平台接入与商业化落地。',
+    evidence: [
+      '数据库 AI 助手：功能设计、Skills 优化与商业化落地。',
+      '内部运维 AI 助手：测试与方案优化，协同推进 AG-UI 与 Hermes 的平台接入。',
+    ],
+    projectId: 'aliyun',
+    current: true,
+  },
+]
+
+export const projectOrder = ['aliyun', 'zhipu', 'defect', 'ganttodo']
+
+export const projects = {
+  aliyun: {
+    id: 'aliyun',
+    folderName: '阿里云数据库实习',
+    kicker: '2026.06 — NOW / ALIBABA CLOUD',
+    title: '让数据库 AI 从“能回答”，走向“能工作”。',
+    summary: '围绕两条主线工作：一条面向数据库 AI 助手，参与功能设计、Skills 优化与商业化落地；另一条面向内部运维 AI 助手，通过测试和方案优化，协同将云端部署的 Hermes 以 AG-UI 协议接入内部运维平台。',
+    role: '数据库产品经理实习生',
+    problem: '如何从数据库用户的真实任务出发，把模型、Skills、工具和平台状态组织成可交付、可验证的产品能力。',
+    responsibilities: [
+      '参与数据库 AI 助手的功能设计、Skills 优化与商业化落地。',
+      '参与内部运维 AI 助手测试与方案优化。',
+      '协同推进云端 Hermes 通过 AG-UI 接入内部运维平台。',
+    ],
+    system: '数据库 AI 助手：功能设计 → Skills 优化 → 场景验证 → 商业化落地；内部运维 AI 助手：运维平台 ⇄ AG-UI ⇄ Hermes，并连接 Tools / Skills、Memory / Experience 与 Harness Improvement。',
+    evidence: [
+      '两条已确认工作主线均以脱敏产品逻辑呈现。',
+      'Harness 优化只展示抽象闭环：发现 badcase → 提炼经验 / Skill → 回归验证 → 受控更新。',
+    ],
+    boundary: '只展示可公开、已脱敏的产品逻辑；不展示客户、内部平台真名、账号、数据、未公开截图、敏感参数或未确认指标。',
+    accent: '#d76b2c',
+  },
+  zhipu: {
+    id: 'zhipu',
+    folderName: '智谱华章实习',
+    kicker: '2025.12 — 2026.05 / ZHIPU AI',
+    title: '把复杂 ToB AI 项目，组织成可讲、可演、可追问的系统。',
+    summary: '围绕城智大模型大屏，把语音入口、ASR 纠错、意图路由、页面跳转、场景讲解和问答子流程串成展示型 LLM-driven workflow。',
+    role: 'AI 产品经理实习生',
+    problem: '在项目交付末期，把分散的业务材料、项目成果和演示诉求组织成稳定的展示与自然语言交互链路。',
+    responsibilities: [
+      '主导 5 个大屏、14 个页面的展示方案、内容组织和演示脚本。',
+      '设计智能中控、智能讲解、智能问答三类能力。',
+      '设计 ASR 纠错、Router、场景 QA、澄清、拒答和兜底链路。',
+    ],
+    system: '语音 / 文本输入 → ASR 纠错 / 文本归一化 → Router → navigate / explain / qa / general / clarify / other → 前端动作或对应子工作流。',
+    evidence: [
+      '覆盖 4 家单位的业务场景、痛点与项目边界。',
+      '展示方案包含 5 个大屏、14 个页面。',
+    ],
+    boundary: 'LLM 负责自然语言理解、路由匹配和受控生成；Workflow 负责确定性跳屏、讲解流程、问答子链路、兜底、日志和回归。它不是完全自治 Agent，也不是底层模型训练项目。',
+    accent: '#596a87',
+  },
+  defect: {
+    id: 'defect',
+    folderName: '智能缺陷分析系统',
+    kicker: '2024.09 — 2025.07 / INDUSTRIAL AI',
+    title: '把四个模型结果，组织成工程师可判断的辅助报告。',
+    summary: '面向半导体产线 YE 工程师 RCA 阶段，整合缺陷分类、分割、语义描述和历史根因检索，帮助工程师快速理解缺陷并缩小排查范围。',
+    role: '产品 + 核心开发成员',
+    problem: '缺陷分析结果分散，工程师需要在 RCA 阶段快速理解缺陷并定位可复用的历史线索。',
+    responsibilities: [
+      '负责产品方案与系统交互。',
+      '主责 DRNet 根因检索模块。',
+      '负责 GUI 搭建、系统集成和 Top-K 相似缺陷结果交互。',
+    ],
+    system: '分类 / 分割 / 语义 / 检索四个模块共同生成多维辅助分析报告。',
+    evidence: [
+      '使用 2000+ 张真实产线数据完成验证。',
+      '检索模块单次时延 0.03s，Rank-1 准确率 96.2%。',
+      '获“华为杯”中国研究生人工智能创新大赛全国一等奖。',
+    ],
+    boundary: '系统不自动给出最终根因，而是把分类、位置、形貌和历史相似案例组织成辅助信息，交给 YE 工程师判断。',
+    videoSrc: '/新版一分钟展示.mp4',
+    accent: '#687d74',
+  },
+  ganttodo: {
+    id: 'ganttodo',
+    folderName: '甘特图风格化待办系统',
+    kicker: '2025.09 — 2025.12 / INDEPENDENT MVP',
+    title: '用自然语言生成计划，再用甘特图把它改对。',
+    summary: '一个轻量个人工作流 MVP：用自然语言降低任务创建和调整成本，用甘特图表达跨天、并行和长期任务，并保留拖拽修正的用户控制。',
+    role: 'AI 产品经理 / 独立开发',
+    problem: '传统待办列表不擅长表达跨天和并行任务，重型项目管理工具又增加了个人使用成本。',
+    responsibilities: [
+      '定义自然语言排期与甘特图修正的核心链路。',
+      '设计多意图解析、结构化 JSON actions 与时间治理约束。',
+      '独立完成可拖拽 MVP 并部署在线体验。',
+    ],
+    system: '自然语言输入 → 多意图识别 → JSON actions → Gantt state → 拖拽编辑。',
+    evidence: [
+      '支持创建、修改、删除任务和一句话多任务解析。',
+      '使用 Prompt 约束、日历参照表和时区锁定降低时间推理错误。',
+      '在线 MVP 保留 AI 初稿后的人工编辑权。',
+    ],
+    boundary: '当前定位是轻量个人工作流 MVP，不包装成完整项目管理工具；多人协同、复杂依赖、通知、多端同步和后端存储不在已验证范围内。',
+    demoUrl: 'https://yva1nne.github.io/Smart-Ganttodo/',
+    accent: '#786a8f',
+  },
+}
+
+export const projectList = projectOrder.map((projectId) => projects[projectId])
+
+export const projectOverview = {
+  title: '四段工作，四种把 AI 变成产品的方法。',
+  summary: '从数据库产品与运维 Agent，到 ToB 展示工作流、工业缺陷分析和个人效率工具，我更关心的不是“用了什么模型”，而是用户要完成什么任务、系统如何分工，以及结果怎样被验证。',
+}
