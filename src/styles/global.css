@@ -1,0 +1,94 @@
+/* ===== Design Tokens ===== */
+:root {
+  --bg: #e4e5e4;
+  --ink: #181a1c;
+  --muted: #5f6263;
+  --line: rgba(24, 26, 28, 0.16);
+  --line-strong: rgba(24, 26, 28, 0.34);
+  --red: #ef3f5f;
+  --green: #49d193;
+  --blue: #69a7ff;
+  --amber: #e8b752;
+  --violet: #b893ff;
+  --shadow: 0 28px 90px rgba(24, 26, 28, 0.18);
+}
+
+/* ===== Reset & Base ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Manrope', 'Noto Sans SC', system-ui, sans-serif;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(239, 63, 95, 0.38);
+}
+
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 4px;
+}
+
+h1, h2, h3 {
+  margin: 0;
+  font-family: 'Fraunces', 'Noto Sans SC', serif;
+  font-weight: 700;
+  line-height: 0.96;
+  letter-spacing: 0;
+}
+
+h1 { font-size: 90px; }
+h2 { font-size: 58px; }
+h3 { font-size: 31px; }
+
+/* Lock body scroll during transition */
+body.is-transition-locked {
+  overflow: hidden;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 1120px) {
+  h1 { font-size: 72px; }
+}
+
+@media (max-width: 760px) {
+  h1 { font-size: 48px; }
+  h2 { font-size: 38px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+  }
+}

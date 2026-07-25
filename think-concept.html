@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Think - 概念效果</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #e4e5e4;
+    --bg-card: rgba(255, 255, 255, 0.94);
+    --ink: #181a1c;
+    --ink-dim: rgba(24, 26, 28, 0.32);
+    --ink-mid: rgba(24, 26, 28, 0.58);
+    --red: #ef3f5f;
+    --blue: #4a8ee0;
+    --green: #2f9e64;
+    --amber: #c49520;
+    --line-color: rgba(24, 26, 28, 0.06);
+    --line-hover: rgba(24, 26, 28, 0.32);
+    --font-sans: 'Manrope', 'Noto Sans SC', system-ui, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ═══ PAGE LAYOUT ═══ */
+  .think-page {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    padding: 60px 5vw 80px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ═══ HEADER ═══ */
+  .think-header {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 700ms ease forwards;
+  }
+
+  .think-title {
+    font-size: clamp(42px, 5.5vw, 72px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .think-subtitle {
+    color: var(--ink-dim);
+    font-size: clamp(11px, 1.1vw, 14px);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  .think-intro {
+    max-width: 520px;
+    margin-bottom: clamp(40px, 5vh, 64px);
+    color: var(--ink-mid);
+    font-size: clamp(12px, 1.1vw, 15px);
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeUp 700ms 120ms ease forwards;
+  }
+
+  /* ═══ CONSTELLATION AREA ═══ */
+  .constellation {
+    position: relative;
+    flex: 1;
+    min-height: clamp(520px, 64vh, 780px);
+  }
+
+  /* ═══ CLUSTER ZONE BACKGROUNDS ═══ */
+  .cluster-zone {
+    position: absolute;
+    z-index: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    animation: zoneIn 900ms 300ms ease forwards;
+  }
+
+  @keyframes zoneIn {
+    to { opacity: 1; }
+  }
+
+  /* ═══ CLUSTER LABELS ═══ */
+  .cluster-label {
+    position: absolute;
+    z-index: 1;
+    color: rgba(24, 26, 28, 0.06);
+    font-size: clamp(48px, 7vw, 96px);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    pointer-events: none;
+    white-space: nowrap;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    animation: fadeUp 800ms 500ms ease forwards;
+  }
+
+  /* ═══ SVG LINES ═══ */
+  .constellation-lines {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .constellation-lines line {
+    fill: none;
+    stroke: var(--line-color);
+    stroke-width: 1;
+    transition: stroke 400ms ease, stroke-width 400ms ease;
+  }
+
+  .constellation-lines line.is-highlighted {
+    stroke: var(--line-hover);
+    stroke-width: 1.8;
+  }
+
+  /* ═══ AMBIENT DOTS ═══ */
+  .ambient-dot {
+    position: absolute;
+    z-index: 1;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: rgba(24, 26, 28, 0.09);
+    animation: twinkle 4s ease-in-out infinite;
+  }
+
+  /* ═══ NODES ═══ */
+  .node {
+    position: absolute;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    animation: nodeIn 500ms ease forwards;
+    transition: z-index 0ms;
+  }
+
+  .node.is-dimmed {
+    opacity: 0.12 !important;
+    transition: opacity 400ms ease;
+  }
+
+  .node.is-active {
+    z-index: 10;
+  }
+
+  .node-dot {
+    flex-shrink: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--node-color, var(--ink-dim));
+    transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 300ms ease;
+    box-shadow: 0 0 0 0 transparent;
+  }
+
+  .node:hover .node-dot,
+  .node.is-active .node-dot {
+    transform: scale(2);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--node-color, #888) 35%, transparent);
+  }
+
+  .node-label {
+    max-width: clamp(130px, 17vw, 210px);
+    color: var(--ink-mid);
+    font-size: clamp(11px, 1.05vw, 14px);
+    font-weight: 600;
+    line-height: 1.4;
+    transition: color 300ms ease, transform 300ms ease;
+  }
+
+  .node:hover .node-label,
+  .node.is-active .node-label {
+    color: var(--ink);
+    transform: translateX(3px);
+  }
+
+  /* ── primary (thesis) node ── */
+  .node.is-primary .node-dot {
+    width: 12px;
+    height: 12px;
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--node-color, #888) 18%, transparent);
+  }
+
+  .node.is-primary:hover .node-dot,
+  .node.is-primary.is-active .node-dot {
+    transform: scale(1.6);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--node-color, #888) 22%, transparent),
+                0 0 24px color-mix(in srgb, var(--node-color, #888) 30%, transparent);
+  }
+
+  .node.is-primary .node-label {
+    font-size: clamp(14px, 1.4vw, 18px);
+    font-weight: 800;
+    color: var(--ink);
+    max-width: clamp(160px, 20vw, 260px);
+  }
+
+  /* ── secondary node ── */
+  .node.is-secondary .node-label {
+    font-size: clamp(10px, 0.95vw, 12px);
+    color: var(--ink-dim);
+  }
+
+  .node.is-secondary:hover .node-label,
+  .node.is-secondary.is-active .node-label {
+    color: var(--ink-mid);
+  }
+
+  /* label alignment variants */
+  .node.label-left {
+    flex-direction: row-reverse;
+  }
+  .node.label-left .node-label {
+    text-align: right;
+  }
+  .node.label-left:hover .node-label,
+  .node.label-left.is-active .node-label {
+    transform: translateX(-3px);
+  }
+
+  /* ── node index tag ── */
+  .node-index {
+    position: absolute;
+    top: -16px;
+    left: 0;
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--ink-dim);
+    letter-spacing: 0.04em;
+    opacity: 0.5;
+  }
+
+  .node.label-left .node-index {
+    left: auto;
+    right: 0;
+  }
+
+  /* ═══ DETAIL CARD ═══ */
+  .node-detail {
+    position: absolute;
+    z-index: 20;
+    width: min(340px, 80vw);
+    padding: 18px 20px;
+    border: 1px solid rgba(24, 26, 28, 0.08);
+    border-radius: 14px;
+    background: var(--bg-card);
+    backdrop-filter: blur(28px) saturate(1.5);
+    -webkit-backdrop-filter: blur(28px) saturate(1.5);
+    box-shadow:
+      0 2px 8px rgba(24, 26, 28, 0.04),
+      0 12px 40px rgba(24, 26, 28, 0.1),
+      0 0 0 1px rgba(0, 0, 0, 0.02);
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 280ms ease, transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .node-detail.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .node-detail::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 24px;
+    width: 12px;
+    height: 12px;
+    border-top: 1px solid rgba(24, 26, 28, 0.08);
+    border-left: 1px solid rgba(24, 26, 28, 0.08);
+    background: var(--bg-card);
+    transform: rotate(45deg);
+  }
+
+  .node-detail.align-right::before {
+    left: auto;
+    right: 24px;
+  }
+
+  .node-detail.align-top {
+    transform: translateY(-8px);
+  }
+  .node-detail.align-top.is-visible {
+    transform: translateY(0);
+  }
+  .node-detail.align-top::before {
+    top: auto;
+    bottom: -6px;
+    transform: rotate(225deg);
+  }
+
+  .detail-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+    color: var(--node-color, var(--ink-dim));
+    background: color-mix(in srgb, var(--node-color, #888) 10%, transparent);
+  }
+
+  .detail-text {
+    color: var(--ink-mid);
+    font-size: 13px;
+    line-height: 1.65;
+  }
+
+  .detail-text strong {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  .detail-ref {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(24, 26, 28, 0.07);
+    color: var(--ink-dim);
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .detail-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    width: 22px;
+    height: 22px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(24, 26, 28, 0.05);
+    color: var(--ink-dim);
+    font-size: 14px;
+    line-height: 22px;
+    text-align: center;
+    cursor: pointer;
+    transition: background 200ms ease, color 200ms ease;
+  }
+
+  .detail-close:hover {
+    background: rgba(24, 26, 28, 0.1);
+    color: var(--ink);
+  }
+
+  /* ═══ LEGEND ═══ */
+  .think-legend {
+    display: flex;
+    gap: 20px;
+    margin-top: clamp(32px, 4vh, 56px);
+    opacity: 0;
+    animation: fadeUp 700ms 1000ms ease forwards;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink-dim);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  .legend-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  /* ═══ KEYFRAMES ═══ */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes nodeIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.8; }
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 900px) {
+    .think-page { padding: 48px 20px 64px; }
+    .constellation { min-height: 640px; }
+    .node-label { max-width: 140px; font-size: 11px; }
+    .node.is-primary .node-label { font-size: 14px; max-width: 180px; }
+    .node-detail { width: min(300px, 85vw); }
+    .cluster-label { font-size: 48px; }
+    .think-legend { flex-wrap: wrap; gap: 12px; }
+  }
+
+  @media (max-width: 600px) {
+    .think-header { flex-direction: column; gap: 6px; }
+    .constellation { min-height: 720px; }
+    .cluster-label { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<section class="think-page">
+
+  <header>
+    <div class="think-header">
+      <h2 class="think-title">Think</h2>
+      <span class="think-subtitle">FRAGMENTS FROM 12 INTERVIEWS & BEYOND</span>
+    </div>
+    <p class="think-intro">
+      面试复盘、项目实战、阅读提炼——散落成图的不是结论，是思考的痕迹。
+    </p>
+  </header>
+
+  <div class="constellation" id="constellation">
+    <svg class="constellation-lines" id="lines"></svg>
+  </div>
+
+  <div class="think-legend">
+    <span class="legend-item"><span class="legend-dot" style="background: var(--red);"></span>Agent 架构</span>
+    <span class="legend-item"><span class="legend-dot" style="background: var(--blue);"></span>Prompt 工程</span>
+    <span class="legend-item"><span class="legend-dot" style="background: var(--green);"></span>产品与交付</span>
+  </div>
+
+</section>
+
+<script>
+const nodes = [
+  {
+    id: 'pure-agent', label: '我不信「纯 Agent」',
+    x: 50, y: 8, color: 'var(--red)', tag: 'Agent 架构',
+    tier: 'primary', index: '01',
+    detail: '好用的 agentic system 都是 <strong>workflow 和 agent 的混合</strong>。模型自由发挥说错一个指标就是事故——自主性有成本上限。',
+    ref: 'Anthropic《Building Effective Agents》workflow/agent 二分法',
+    labelSide: 'right',
+  },
+  {
+    id: 'workflow-first', label: '确定性场景，\nWorkflow 先行',
+    x: 28, y: 20, color: 'var(--red)', tag: 'Agent 架构',
+    tier: 'normal', index: '02',
+    detail: '第一反应不是「让模型自由规划」，而是先划清：<strong>哪些环节绝对控制、哪些 LLM 辅助、哪些可以自主</strong>。',
+    ref: '',
+    labelSide: 'left',
+  },
+  {
+    id: 'router-first', label: '路由先行，\n收敛不确定性',
+    x: 20, y: 36, color: 'var(--blue)', tag: 'Prompt 工程',
+    tier: 'normal', index: '03',
+    detail: '主路由链和子场景 QA 解耦——修一个 domain 的 Prompt 不影响其他，新加场景不改主路由。',
+    ref: 'Router → mode → domain → sub-workflow 四级路由',
+    labelSide: 'left',
+  },
+  {
+    id: 'formula', label: 'Agent = Model\n+ Harness + Memory',
+    x: 72, y: 18, color: 'var(--red)', tag: 'Agent 架构',
+    tier: 'primary', index: '04',
+    detail: 'Harness 不是「框架」，是<strong>「运行宪法」</strong>——什么时候调工具、失败怎么办、何时确认、何时拒绝。Memory 不是「记住对话」，要分层。',
+    ref: 'Anthropic harness 设计 · 阿里云百炼面试',
+    labelSide: 'right',
+  },
+  {
+    id: 'harness-shrink', label: '好 harness\n可以被拆掉',
+    x: 85, y: 33, color: 'var(--red)', tag: 'Agent 架构',
+    tier: 'secondary', index: '05',
+    detail: '好 harness 的标准不是「复杂」，而是<strong>「恰好补上当前模型的短板」</strong>。模型进步了，脚手架变成不必要的开销。',
+    ref: 'Opus 4.5 → 4.6 迭代实验',
+    labelSide: 'right',
+  },
+  {
+    id: 'prompt-engineering', label: 'Prompt 是工程，\n不是话术',
+    x: 35, y: 52, color: 'var(--blue)', tag: 'Prompt 工程',
+    tier: 'primary', index: '06',
+    detail: '固定 Schema、外部注入不让模型猜、badcase 驱动迭代、覆盖集设计。每次调整必须有触发原因，改完跑回归。',
+    ref: '',
+    labelSide: 'right',
+  },
+  {
+    id: 'tool-def', label: '工具定义 >\n系统 Prompt',
+    x: 13, y: 63, color: 'var(--blue)', tag: 'Prompt 工程',
+    tier: 'secondary', index: '07',
+    detail: '工具定义的清晰程度对调用成功率的影响，<strong>往往比整体 System Prompt 更大</strong>。像给初级开发者写 docstring。',
+    ref: 'Anthropic 附录 2 · Prompt Engineering your Tools',
+    labelSide: 'left',
+  },
+  {
+    id: 'skill-mcp', label: 'Tool · Skill · MCP',
+    x: 50, y: 42, color: 'var(--blue)', tag: 'Prompt 工程',
+    tier: 'normal', index: '08',
+    detail: 'Tool 是手脚（执行），Skill 是经验套路（怎么做），MCP 是神经系统（怎么连起来）。<strong>三者解决不同层次的问题。</strong>',
+    ref: '字节面试反复追问',
+    labelSide: 'right',
+  },
+  {
+    id: 'translate', label: 'PM 在技术与\n场景间翻译',
+    x: 73, y: 54, color: 'var(--green)', tag: '产品与交付',
+    tier: 'normal', index: '09',
+    detail: '三层能力：技术到产品的翻译、复杂信息结构化、动手验证。把 pass@1 翻译成用户操作成功率。',
+    ref: '',
+    labelSide: 'right',
+  },
+  {
+    id: 'evaluation', label: '评估说 100%\n是工程不诚实',
+    x: 35, y: 77, color: 'var(--amber)', tag: '通用',
+    tier: 'primary', index: '10',
+    detail: '评估应拆两层：离线看 pass@k 和分项指标，在线看演示稳定性。<strong>永远不要把离线覆盖率包装成线上准确率。</strong>',
+    ref: 'pass@k vs pass@1 · reward hacking',
+    labelSide: 'right',
+  },
+  {
+    id: 'tob-messy', label: 'ToB 交付\n比想象更 messy',
+    x: 72, y: 78, color: 'var(--green)', tag: '产品与交付',
+    tier: 'primary', index: '11',
+    detail: '企业买 AI 不是因为酷，是因为<strong>能讲清、能跑通、能交付</strong>。PM 最大价值是降低不确定性。演示能力本身就是产品能力。',
+    ref: '智谱项目 · 4 家单位材料分散',
+    labelSide: 'right',
+  },
+];
+
+const edges = [
+  ['pure-agent', 'workflow-first'],
+  ['pure-agent', 'formula'],
+  ['pure-agent', 'router-first'],
+  ['workflow-first', 'router-first'],
+  ['formula', 'harness-shrink'],
+  ['formula', 'skill-mcp'],
+  ['router-first', 'prompt-engineering'],
+  ['prompt-engineering', 'tool-def'],
+  ['prompt-engineering', 'skill-mcp'],
+  ['skill-mcp', 'translate'],
+  ['translate', 'tob-messy'],
+  ['evaluation', 'tool-def'],
+  ['evaluation', 'tob-messy'],
+];
+
+// Cluster zones (background blobs)
+const zones = [
+  { x: 42, y: 24, w: 52, h: 30, color: 'rgba(239, 63, 95, 0.035)' },
+  { x: 36, y: 52, w: 48, h: 28, color: 'rgba(74, 142, 224, 0.035)' },
+  { x: 72, y: 68, w: 28, h: 24, color: 'rgba(47, 158, 100, 0.035)' },
+];
+
+// Cluster watermark labels
+const clusterLabels = [
+  { text: 'ARCHITECTURE', x: 50, y: 3, color: 'rgba(239, 63, 95, 0.055)' },
+  { text: 'ENGINEERING', x: 34, y: 43, color: 'rgba(74, 142, 224, 0.055)' },
+  { text: 'DELIVERY', x: 76, y: 68, color: 'rgba(47, 158, 100, 0.055)' },
+];
+
+// ── Render ──
+const container = document.getElementById('constellation');
+const svg = document.getElementById('lines');
+let activeNodeId = null;
+let activeCard = null;
+
+// Cluster zone backgrounds
+zones.forEach(zone => {
+  const el = document.createElement('div');
+  el.className = 'cluster-zone';
+  el.style.cssText = `
+    left: ${zone.x - zone.w / 2}%;
+    top: ${zone.y - zone.h / 2}%;
+    width: ${zone.w}%;
+    height: ${zone.h}%;
+    background: radial-gradient(ellipse, ${zone.color} 0%, transparent 70%);
+  `;
+  container.appendChild(el);
+});
+
+// Cluster watermark labels
+clusterLabels.forEach(cl => {
+  const el = document.createElement('div');
+  el.className = 'cluster-label';
+  el.style.cssText = `left: ${cl.x}%; top: ${cl.y}%; color: ${cl.color};`;
+  el.textContent = cl.text;
+  container.appendChild(el);
+});
+
+// Ambient dots
+for (let i = 0; i < 50; i++) {
+  const dot = document.createElement('span');
+  dot.className = 'ambient-dot';
+  dot.style.left = `${Math.random() * 100}%`;
+  dot.style.top = `${Math.random() * 100}%`;
+  dot.style.animationDelay = `${Math.random() * 4}s`;
+  dot.style.animationDuration = `${3 + Math.random() * 4}s`;
+  if (Math.random() > 0.7) {
+    dot.style.width = '3px';
+    dot.style.height = '3px';
+  }
+  container.appendChild(dot);
+}
+
+// Node elements
+const nodeEls = {};
+nodes.forEach((node, i) => {
+  const el = document.createElement('div');
+  const tierClass = node.tier === 'primary' ? 'is-primary' : node.tier === 'secondary' ? 'is-secondary' : '';
+  el.className = `node label-${node.labelSide} ${tierClass}`.trim();
+  el.style.left = `${node.x}%`;
+  el.style.top = `${node.y}%`;
+  el.style.setProperty('--node-color', node.color);
+  el.style.animationDelay = `${300 + i * 70}ms`;
+  el.dataset.id = node.id;
+
+  const labelHtml = node.label.replace(/\n/g, '<br>');
+  el.innerHTML = `
+    <span class="node-index">${node.index}</span>
+    <span class="node-dot"></span>
+    <span class="node-label">${labelHtml}</span>
+  `;
+
+  el.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleDetail(node, el);
+  });
+
+  el.addEventListener('mouseenter', () => highlightConnections(node.id));
+  el.addEventListener('mouseleave', () => {
+    if (!activeNodeId) clearHighlights();
+  });
+
+  container.appendChild(el);
+  nodeEls[node.id] = el;
+});
+
+document.addEventListener('click', () => closeDetail());
+
+// ── Curved Lines (anchored to dot centers) ──
+function getDotCenter(nodeId) {
+  const el = nodeEls[nodeId];
+  if (!el) return { x: 0, y: 0 };
+  const dot = el.querySelector('.node-dot');
+  const containerRect = container.getBoundingClientRect();
+  const dotRect = dot.getBoundingClientRect();
+  return {
+    x: dotRect.left + dotRect.width / 2 - containerRect.left,
+    y: dotRect.top + dotRect.height / 2 - containerRect.top,
+  };
+}
+
+function drawLines() {
+  svg.innerHTML = '';
+  const rect = container.getBoundingClientRect();
+  svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+
+  edges.forEach(([fromId, toId]) => {
+    if (!nodeEls[fromId] || !nodeEls[toId]) return;
+
+    const p1 = getDotCenter(fromId);
+    const p2 = getDotCenter(toId);
+
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', p1.x);
+    line.setAttribute('y1', p1.y);
+    line.setAttribute('x2', p2.x);
+    line.setAttribute('y2', p2.y);
+    line.dataset.from = fromId;
+    line.dataset.to = toId;
+    svg.appendChild(line);
+  });
+}
+
+// Wait for layout to settle, then draw
+requestAnimationFrame(() => requestAnimationFrame(drawLines));
+window.addEventListener('resize', drawLines);
+
+// ── Highlight connections ──
+function highlightConnections(nodeId) {
+  const connectedIds = new Set([nodeId]);
+  svg.querySelectorAll('line').forEach(line => {
+    const isRelated = line.dataset.from === nodeId || line.dataset.to === nodeId;
+    line.classList.toggle('is-highlighted', isRelated);
+    if (isRelated) {
+      connectedIds.add(line.dataset.from);
+      connectedIds.add(line.dataset.to);
+    }
+  });
+
+  if (!activeNodeId) {
+    Object.entries(nodeEls).forEach(([id, el]) => {
+      el.classList.toggle('is-dimmed', !connectedIds.has(id));
+    });
+  }
+}
+
+function clearHighlights() {
+  svg.querySelectorAll('line').forEach(l => l.classList.remove('is-highlighted'));
+  Object.values(nodeEls).forEach(el => el.classList.remove('is-dimmed'));
+}
+
+// ── Detail card ──
+function toggleDetail(node, nodeEl) {
+  if (activeNodeId === node.id) {
+    closeDetail();
+    return;
+  }
+
+  closeDetail();
+  activeNodeId = node.id;
+  nodeEl.classList.add('is-active');
+  highlightConnections(node.id);
+
+  const connectedIds = new Set([node.id]);
+  edges.forEach(([from, to]) => {
+    if (from === node.id) connectedIds.add(to);
+    if (to === node.id) connectedIds.add(from);
+  });
+  Object.entries(nodeEls).forEach(([id, el]) => {
+    el.classList.toggle('is-dimmed', !connectedIds.has(id));
+  });
+
+  const card = document.createElement('div');
+  card.className = 'node-detail';
+  card.style.setProperty('--node-color', node.color);
+
+  const containerRect = container.getBoundingClientRect();
+  const nodeRect = nodeEl.getBoundingClientRect();
+  const cardWidth = Math.min(340, containerRect.width * 0.8);
+
+  const spaceBelow = containerRect.height - (nodeRect.top - containerRect.top + nodeRect.height / 2);
+  const showAbove = spaceBelow < 220;
+
+  const nodeCenterX = nodeRect.left - containerRect.left + nodeRect.width / 2;
+  const preferRight = nodeCenterX < containerRect.width / 2;
+
+  let left = preferRight
+    ? Math.max(8, nodeCenterX - 30)
+    : Math.max(8, nodeCenterX - cardWidth + 30);
+  left = Math.min(left, containerRect.width - cardWidth - 8);
+
+  card.style.left = `${left}px`;
+
+  if (showAbove) {
+    const nodeTop = nodeRect.top - containerRect.top - nodeRect.height / 2;
+    card.style.bottom = `${containerRect.height - nodeTop + 16}px`;
+    card.classList.add('align-top');
+    if (!preferRight) card.classList.add('align-right');
+  } else {
+    const nodeBottom = nodeRect.top - containerRect.top + nodeRect.height / 2;
+    card.style.top = `${nodeBottom + 16}px`;
+    if (!preferRight) card.classList.add('align-right');
+  }
+
+  card.innerHTML = `
+    <button class="detail-close" aria-label="关闭">&times;</button>
+    ${node.tag ? `<span class="detail-tag">${node.tag}</span>` : ''}
+    <p class="detail-text">${node.detail}</p>
+    ${node.ref ? `<p class="detail-ref">Ref: ${node.ref}</p>` : ''}
+  `;
+
+  card.querySelector('.detail-close').addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeDetail();
+  });
+  card.addEventListener('click', (e) => e.stopPropagation());
+
+  container.appendChild(card);
+  requestAnimationFrame(() => card.classList.add('is-visible'));
+  activeCard = card;
+}
+
+function closeDetail() {
+  if (activeCard) {
+    activeCard.classList.remove('is-visible');
+    const card = activeCard;
+    setTimeout(() => card.remove(), 300);
+    activeCard = null;
+  }
+  if (activeNodeId) {
+    nodeEls[activeNodeId]?.classList.remove('is-active');
+    activeNodeId = null;
+  }
+  clearHighlights();
+}
+</script>
+
+</body>
+</html>
