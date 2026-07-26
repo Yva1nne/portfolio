@@ -369,9 +369,9 @@ onUnmounted(() => {
 
 .cover-layer {
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto;
   z-index: 5;
-  min-height: 100svh;
+  height: 100svh;
   overflow: hidden;
   background:
     radial-gradient(circle at 48% 48%, rgba(255, 255, 255, 0.5), transparent 42%),
