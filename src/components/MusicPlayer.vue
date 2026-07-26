@@ -4,12 +4,12 @@
     :class="{
       'is-playing': isPlaying,
       'has-error': playbackState === 'error',
+      'is-expanded': mobileExpanded,
     }"
     aria-label="背景音乐播放器"
   >
     <audio
       ref="audioRef"
-      :src="track.src"
       preload="metadata"
       @loadstart="onLoadStart"
       @loadedmetadata="syncMetadata"
@@ -22,7 +22,14 @@
       @ended="onEnded"
       @volumechange="syncVolume"
       @error="onAudioError"
-    ></audio>
+    >
+      <source
+        v-for="source in track.sources"
+        :key="source.src"
+        :src="source.src"
+        :type="source.type"
+      >
+    </audio>
 
     <div class="player-primary">
       <button
@@ -42,62 +49,76 @@
         <span>{{ track.artist }}</span>
       </div>
 
-      <span class="level-meter" aria-hidden="true">
-        <i></i><i></i><i></i><i></i>
-      </span>
+      <div class="player-end">
+        <span class="level-meter" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+        </span>
+        <button
+          type="button"
+          class="mobile-details-toggle"
+          aria-controls="music-player-details"
+          :aria-expanded="mobileExpanded"
+          :aria-label="mobileExpanded ? '收起音乐播放器详细控制' : '展开音乐播放器详细控制'"
+          @click="toggleMobileDetails"
+        >
+          {{ mobileExpanded ? 'LESS' : 'MORE' }}
+        </button>
+      </div>
     </div>
 
-    <div class="player-controls">
-      <label class="range-control progress-control">
-        <span class="visually-hidden">播放进度</span>
-        <input
-          type="range"
-          min="0"
-          :max="duration || 0"
-          step="0.1"
-          :value="progressValue"
-          :disabled="!hasDuration || playbackState === 'error'"
-          :aria-valuetext="`${formatTime(progressValue)} / ${formatTime(duration)}`"
-          :style="{ '--range-progress': `${progressPercent}%` }"
-          @input="seekTo"
+    <div id="music-player-details" class="player-details">
+      <div class="player-controls">
+        <label class="range-control progress-control">
+          <span class="visually-hidden">播放进度</span>
+          <input
+            type="range"
+            min="0"
+            :max="duration || 0"
+            step="0.1"
+            :value="progressValue"
+            :disabled="!hasDuration || playbackState === 'error'"
+            :aria-valuetext="`${formatTime(progressValue)} / ${formatTime(duration)}`"
+            :style="{ '--range-progress': `${progressPercent}%` }"
+            @input="seekTo"
+          >
+        </label>
+
+        <time class="time-copy">{{ formatTime(progressValue) }} / {{ formatTime(duration) }}</time>
+
+        <button
+          type="button"
+          class="mute-button"
+          :aria-label="muted ? '取消静音' : '静音'"
+          :aria-pressed="muted"
+          @click="toggleMuted"
         >
-      </label>
+          {{ muted ? 'MUTED' : 'SOUND' }}
+        </button>
 
-      <time class="time-copy">{{ formatTime(progressValue) }} / {{ formatTime(duration) }}</time>
+        <label class="range-control volume-control">
+          <span class="visually-hidden">音量</span>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            :value="volume"
+            :aria-valuetext="`${Math.round(volume * 100)}%`"
+            :style="{ '--range-progress': `${volume * 100}%` }"
+            @input="setVolume"
+          >
+        </label>
+      </div>
 
-      <button
-        type="button"
-        class="mute-button"
-        :aria-label="muted ? '取消静音' : '静音'"
-        :aria-pressed="muted"
-        @click="toggleMuted"
+      <p
+        class="player-status"
+        :class="{ 'is-error': playbackState === 'error' }"
+        role="status"
+        aria-live="polite"
       >
-        {{ muted ? 'MUTED' : 'SOUND' }}
-      </button>
-
-      <label class="range-control volume-control">
-        <span class="visually-hidden">音量</span>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.05"
-          :value="volume"
-          :aria-valuetext="`${Math.round(volume * 100)}%`"
-          :style="{ '--range-progress': `${volume * 100}%` }"
-          @input="setVolume"
-        >
-      </label>
+        {{ visibleStatus }}
+      </p>
     </div>
-
-    <p
-      class="player-status"
-      :class="{ 'is-error': playbackState === 'error' }"
-      role="status"
-      aria-live="polite"
-    >
-      {{ visibleStatus }}
-    </p>
   </aside>
 </template>
 
@@ -105,7 +126,16 @@
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
 const track = {
-  src: '/audio/ambient-music-test-yamaha-ck61.ogg',
+  sources: [
+    {
+      src: '/audio/ambient-music-test-yamaha-ck61.ogg',
+      type: 'audio/ogg; codecs=vorbis',
+    },
+    {
+      src: '/audio/ambient-music-test-yamaha-ck61.mp3',
+      type: 'audio/mpeg',
+    },
+  ],
   title: 'Ambient Music Test · Yamaha CK61',
   artist: 'Wilfredor',
 }
@@ -122,6 +152,9 @@ const volume = ref(0.72)
 const muted = ref(false)
 const playbackState = ref('loading')
 const errorMessage = ref('')
+const mobileExpanded = ref(false)
+const isMobile = ref(false)
+let mobileQuery = null
 
 const isPlaying = computed(() => (
   playbackState.value === 'playing' || playbackState.value === 'buffering'
@@ -209,6 +242,7 @@ async function togglePlayback() {
     errorMessage.value = error?.name === 'NotAllowedError'
       ? '浏览器未允许播放，请再次点击 PLAY'
       : '音频播放失败，请检查文件或浏览器格式支持'
+    if (isMobile.value) mobileExpanded.value = true
   }
 }
 
@@ -290,6 +324,26 @@ function onAudioError() {
   }
   playbackState.value = 'error'
   errorMessage.value = messages[errorCode] || '音频加载失败'
+  if (isMobile.value) mobileExpanded.value = true
+}
+
+function toggleMobileDetails() {
+  mobileExpanded.value = !mobileExpanded.value
+}
+
+function syncMobileLayout(event) {
+  isMobile.value = event.matches
+  if (event.matches) mobileExpanded.value = false
+}
+
+function addMediaListener(query, listener) {
+  if (query.addEventListener) query.addEventListener('change', listener)
+  else query.addListener?.(listener)
+}
+
+function removeMediaListener(query, listener) {
+  if (query?.removeEventListener) query.removeEventListener('change', listener)
+  else query?.removeListener?.(listener)
 }
 
 function formatTime(seconds) {
@@ -301,11 +355,15 @@ function formatTime(seconds) {
 }
 
 onMounted(() => {
+  mobileQuery = window.matchMedia('(max-width: 760px)')
+  isMobile.value = mobileQuery.matches
+  addMediaListener(mobileQuery, syncMobileLayout)
   readPreferences()
   applyPreferences()
 })
 
 onBeforeUnmount(() => {
+  removeMediaListener(mobileQuery, syncMobileLayout)
   audioRef.value?.pause()
 })
 </script>
@@ -335,7 +393,7 @@ onBeforeUnmount(() => {
 .player-primary {
   display: grid;
   min-width: 0;
-  grid-template-columns: 44px minmax(0, 1fr) 18px;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
 }
@@ -353,7 +411,7 @@ onBeforeUnmount(() => {
 
 .play-button {
   width: 44px;
-  height: 36px;
+  height: 44px;
   padding: 0;
   border-right: 1px solid var(--line-strong, rgba(24, 26, 28, 0.34));
   font-size: 8px;
@@ -401,6 +459,12 @@ onBeforeUnmount(() => {
   font-size: 8px;
 }
 
+.player-end {
+  display: grid;
+  min-width: 18px;
+  justify-items: end;
+}
+
 .level-meter {
   display: flex;
   height: 18px;
@@ -423,6 +487,15 @@ onBeforeUnmount(() => {
 .music-player.is-playing .level-meter i:nth-child(3) { animation-delay: -180ms; }
 .music-player.is-playing .level-meter i:nth-child(4) { animation-delay: -610ms; }
 
+.mobile-details-toggle {
+  display: none;
+}
+
+.player-details {
+  display: grid;
+  gap: 8px;
+}
+
 .player-controls {
   display: grid;
   min-width: 0;
@@ -441,7 +514,7 @@ onBeforeUnmount(() => {
 
 .range-control input {
   width: 100%;
-  height: 14px;
+  height: 32px;
   margin: 0;
   padding: 0;
   appearance: none;
@@ -469,9 +542,9 @@ onBeforeUnmount(() => {
 }
 
 .range-control input::-webkit-slider-thumb {
-  width: 7px;
-  height: 7px;
-  margin-top: -3px;
+  width: 9px;
+  height: 9px;
+  margin-top: -4px;
   appearance: none;
   border: 1px solid currentColor;
   border-radius: 50%;
@@ -479,8 +552,8 @@ onBeforeUnmount(() => {
 }
 
 .range-control input::-moz-range-thumb {
-  width: 7px;
-  height: 7px;
+  width: 9px;
+  height: 9px;
   border: 1px solid currentColor;
   border-radius: 50%;
   background: #e4e5e4;
@@ -493,7 +566,8 @@ onBeforeUnmount(() => {
 
 .range-control input:focus-visible,
 .play-button:focus-visible,
-.mute-button:focus-visible {
+.mute-button:focus-visible,
+.mobile-details-toggle:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 3px;
 }
@@ -505,7 +579,9 @@ onBeforeUnmount(() => {
 }
 
 .mute-button {
-  padding: 3px 0;
+  min-width: 44px;
+  min-height: 32px;
+  padding: 0;
   font-size: 7px;
 }
 
@@ -536,21 +612,58 @@ onBeforeUnmount(() => {
 
 @media (max-width: 760px) {
   .music-player {
-    right: 8px;
+    right: auto;
     bottom: max(8px, env(safe-area-inset-bottom));
     left: 8px;
-    width: auto;
+    width: min(260px, calc(100vw - 24px));
+    gap: 0;
     padding: 8px 10px;
   }
 
+  .music-player.is-expanded {
+    width: min(340px, calc(100vw - 24px));
+    gap: 8px;
+  }
+
   .player-primary {
-    grid-template-columns: 38px minmax(0, 1fr) 16px;
+    grid-template-columns: 44px minmax(0, 1fr) 40px;
     gap: 8px;
   }
 
   .play-button {
-    width: 38px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .player-end {
+    min-width: 40px;
+  }
+
+  .level-meter {
+    display: none;
+  }
+
+  .mobile-details-toggle {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid var(--line, rgba(24, 26, 28, 0.16));
+    background: transparent;
+    color: inherit;
+    font: 800 7px/1 var(--font-sans, 'Manrope', sans-serif);
+    letter-spacing: 0.08em;
+    cursor: pointer;
+  }
+
+  .music-player:not(.is-expanded) .player-details {
+    display: none;
+  }
+
+  .music-player:not(.is-expanded) .track-copy p,
+  .music-player:not(.is-expanded) .track-copy span {
+    display: none;
   }
 
   .player-controls {
