@@ -332,7 +332,7 @@ const selectedOperationNodeData = computed(() => (
 .summary,
 .intro { color: var(--muted); line-height: 1.7; }
 .summary { max-width: 74em; margin: 17px 0 22px; font-size: clamp(13px, 1.55cqw, 16px); }
-.intro { max-width: 72em; margin: 12px 0 19px; font-size: 11px; }
+.intro { max-width: 72em; margin: 12px 0 19px; font-size: 14px; }
 
 .tag {
   display: inline-flex;
@@ -461,8 +461,8 @@ const selectedOperationNodeData = computed(() => (
   background: rgba(255, 255, 255, 0.2);
 }
 .detail header { flex-wrap: wrap; color: var(--muted); font-size: 8px; letter-spacing: 0.03em; }
-.detail p { margin: 0; font-size: 11px; line-height: 1.65; }
-.detail > small { color: var(--muted); font-size: 9px; line-height: 1.55; }
+.detail p { margin: 0; font-size: 14px; line-height: 1.65; }
+.detail > small { color: var(--muted); font-size: 12px; line-height: 1.55; }
 
 .architecture { display: flex; align-items: stretch; border: 1px solid var(--line); border-bottom: 0; }
 .architecture-node { flex: 1 1 0; min-width: 0; border-bottom: 1px solid var(--line); }
@@ -526,7 +526,7 @@ const selectedOperationNodeData = computed(() => (
 .event-stream li { display: grid; gap: 7px; min-width: 0; padding: 12px 8px; border-top: 1px solid var(--strong-line); }
 .event-stream code { overflow-wrap: anywhere; color: var(--accent-text); font-size: 7px; font-weight: 800; }
 .event-stream li span,
-.event-stream > p { color: var(--muted); font-size: 8px; line-height: 1.5; }
+.event-stream > p { color: var(--muted); font-size: 12px; line-height: 1.5; }
 .event-stream > p { margin: 0 0 12px; }
 
 .harness { margin-top: 22px; }
@@ -562,7 +562,7 @@ const selectedOperationNodeData = computed(() => (
   justify-content: flex-start;
   gap: 8px 15px;
   color: var(--muted);
-  font-size: 8px;
+  font-size: 11px;
   line-height: 1.45;
 }
 .legend span { display: inline-flex; align-items: center; gap: 5px; }
@@ -573,8 +573,8 @@ const selectedOperationNodeData = computed(() => (
 .sources { padding: 9px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .sources a { color: var(--ink); text-underline-offset: 3px; }
 .sources a:hover { text-decoration-color: var(--accent); }
-.pending ul { display: grid; gap: 6px; margin: 0; padding: 0 0 12px 1.2em; color: var(--muted); font-size: 9px; line-height: 1.5; }
-.security-note { margin: 0; color: var(--muted); font-size: 8px; line-height: 1.55; }
+.pending ul { display: grid; gap: 6px; margin: 0; padding: 0 0 12px 1.2em; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.security-note { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
 
 @keyframes event-flow { to { transform: translateX(18px); } }
 

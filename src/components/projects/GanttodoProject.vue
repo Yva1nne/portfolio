@@ -142,7 +142,7 @@ const frameStatus = computed(() => {
 
 .project-lead > span {
   color: #69646d;
-  font-size: clamp(0.86rem, 1.2vw, 1rem);
+  font-size: clamp(0.9375rem, 1.2vw, 1rem);
   line-height: 1.75;
 }
 
@@ -275,7 +275,7 @@ const frameStatus = computed(() => {
 
 .iframe-fallback span {
   color: rgba(247, 245, 240, 0.76);
-  font-size: 0.75rem;
+  font-size: 0.9375rem;
   line-height: 1.6;
 }
 
@@ -307,7 +307,7 @@ const frameStatus = computed(() => {
 .example-block blockquote {
   margin: 0;
   color: #49434d;
-  font-size: 0.78rem;
+  font-size: 0.9375rem;
   line-height: 1.65;
 }
 
@@ -344,7 +344,7 @@ pre {
 
 .boundary {
   color: #746e77 !important;
-  font: 400 0.7rem/1.65 var(--font-sans, sans-serif) !important;
+  font: 400 0.875rem/1.65 var(--font-sans, sans-serif) !important;
   letter-spacing: 0 !important;
 }
 
@@ -367,6 +367,15 @@ pre {
     align-items: flex-start;
     flex-direction: column;
     padding: 0.7rem 0.8rem;
+    font-size: 0.8125rem;
+  }
+
+  .experience-bar button,
+  .experience-bar a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding: 0 0.2rem;
   }
 
   .project-lead > span,

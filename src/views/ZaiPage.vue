@@ -315,7 +315,7 @@ onBeforeUnmount(() => {
 
 .project-summary {
   color: rgba(25, 27, 27, 0.65);
-  font-size: 0.78rem;
+  font-size: 0.9375rem;
   line-height: 1.7;
 }
 
@@ -340,7 +340,7 @@ onBeforeUnmount(() => {
 .project-copy dd {
   margin: 0;
   color: rgba(25, 27, 27, 0.65);
-  font-size: 0.72rem;
+  font-size: 0.9375rem;
   line-height: 1.6;
 }
 
@@ -374,7 +374,7 @@ onBeforeUnmount(() => {
 .project-copy.is-overview li span,
 .project-copy small {
   color: rgba(25, 27, 27, 0.58);
-  font-size: 0.68rem;
+  font-size: 0.9375rem;
   line-height: 1.55;
 }
 

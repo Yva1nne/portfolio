@@ -8,6 +8,7 @@
   --red: #ef3f5f;
   --green: #49d193;
   --blue: #69a7ff;
+  --focus-ring: #315f8d;
   --amber: #e8b752;
   --violet: #b893ff;
   --shadow: 0 28px 90px rgba(24, 26, 28, 0.18);
@@ -49,7 +50,7 @@ a {
 }
 
 :focus-visible {
-  outline: 2px solid var(--blue);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 4px;
 }
 

@@ -287,7 +287,7 @@ onBeforeUnmount(() => {
 .menu-button:focus-visible,
 .mobile-menu a:focus-visible,
 .mobile-menu header button:focus-visible {
-  outline: 2px solid var(--blue);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 4px;
 }
 
@@ -359,8 +359,10 @@ onBeforeUnmount(() => {
   }
 
   .mobile-menu header button {
+    min-width: 44px;
+    min-height: 44px;
     border: 0;
-    padding: 6px 0;
+    padding: 0;
     background: transparent;
     color: inherit;
     font: inherit;

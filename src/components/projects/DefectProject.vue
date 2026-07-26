@@ -145,7 +145,7 @@ onBeforeUnmount(() => {
 
 .project-lead > span {
   color: #626864;
-  font-size: clamp(0.86rem, 1.2vw, 1rem);
+  font-size: clamp(0.9375rem, 1.2vw, 1rem);
   line-height: 1.75;
 }
 
@@ -240,7 +240,7 @@ video {
 .result-note > span,
 .result-note dd {
   color: #59605c;
-  font-size: 0.78rem;
+  font-size: 0.9375rem;
   line-height: 1.7;
 }
 
@@ -286,6 +286,14 @@ video {
 
   .output-index button:nth-child(-n + 2) {
     border-bottom: 1px solid rgba(37, 41, 39, 0.14);
+  }
+
+  .output-index strong {
+    font-size: 0.9375rem;
+  }
+
+  .output-index small {
+    font-size: 0.8125rem;
   }
 
   .result-note h4 {

@@ -86,7 +86,7 @@
               :data-node-id="node.id"
               :style="{ left: `${node.x}%`, top: `${node.y}%` }"
               :aria-label="`${node.id} ${node.name}，${node.brief}`"
-              @focus="focusNode(node.id)"
+              @focus="focusNode(node.id, $event)"
               @click="activateNode(node.id)"
               @pointerdown="startNodeDrag($event, node)"
             >
@@ -359,8 +359,9 @@ function stopNodeDrag() {
   window.setTimeout(() => { suppressClickNodeId = null }, 0)
 }
 
-function focusNode(nodeId) {
+function focusNode(nodeId, event) {
   selectedNodeId.value = nodeId
+  if (event?.currentTarget.matches(':focus-visible')) revealNode(nodeId)
 }
 
 function activateNode(nodeId) {
@@ -469,7 +470,7 @@ onBeforeUnmount(() => {
 .system-boundary span,
 .node-panel > span {
   color: #626a74;
-  font-size: clamp(0.8rem, 1.1vw, 0.96rem);
+  font-size: clamp(0.9375rem, 1.1vw, 1rem);
   line-height: 1.72;
 }
 
@@ -553,7 +554,7 @@ onBeforeUnmount(() => {
 
 .system-boundary > div:first-child { border-right: 1px solid rgba(37, 42, 49, 0.16); }
 .system-boundary strong { color: #303741; font-size: 0.86rem; }
-.system-boundary span { font-size: 0.74rem; }
+.system-boundary span { font-size: 0.875rem; }
 
 .workflow-shell {
   position: relative;
@@ -717,7 +718,7 @@ onBeforeUnmount(() => {
 .node-panel header p { margin: 0; color: var(--project-accent); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; }
 .node-panel header button { width: 1.7rem; height: 1.7rem; padding: 0; border: 1px solid rgba(37, 42, 49, 0.16); background: transparent; cursor: pointer; }
 .node-panel > strong { font-family: var(--font-serif, serif); font-size: 1.25rem; }
-.node-panel > span { font-size: 0.78rem; }
+.node-panel > span { font-size: 0.9375rem; }
 
 .workflow-hint { margin: -0.5rem 0 0; font-size: 0.7rem !important; }
 
@@ -755,6 +756,11 @@ onBeforeUnmount(() => {
   }
   .workflow-canvas { width: 68rem; min-height: 36rem; }
   .workflow-node { width: 8rem; touch-action: pan-x pan-y; }
+  .workflow-node > strong { font-size: 0.8125rem; }
+  .workflow-node > small { font-size: 0.75rem; }
+  .workflow-toolbar button { width: 2.25rem; height: 2.25rem; }
+  .workflow-toolbar .reset-button { width: 2.75rem; }
+  .node-panel header button { width: 2.25rem; height: 2.25rem; }
   .node-panel { top: auto; left: 0.6rem; right: 0.6rem; bottom: 0.6rem; width: auto; max-height: 44%; border-left-width: 1px; border-top: 2px solid var(--project-accent); transform: translateY(1rem); }
   .node-panel.is-open { transform: translateY(0); }
   .project-lead > span,

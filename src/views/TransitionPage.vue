@@ -14,7 +14,7 @@
       <header class="cover-identity">
         <p>{{ profile.edition }}</p>
         <div>
-          <span>{{ profile.name }}</span>
+          <h1>{{ profile.name }}</h1>
           <strong>{{ profile.direction }}</strong>
         </div>
       </header>
@@ -85,7 +85,7 @@
 
           <article class="about-intro">
             <p class="section-kicker">ABOUT / PROFILE</p>
-            <h1>{{ profile.headline }}</h1>
+            <h2 ref="aboutTitleRef" tabindex="-1">{{ profile.headline }}</h2>
 
             <div class="intro-copy">
               <p v-for="paragraph in profile.introduction" :key="paragraph">
@@ -146,7 +146,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue'
 import { capabilities, profile } from '../data/portfolio.js'
 import { useTicketTransition } from '../composables/useTicketTransition.js'
 
@@ -178,6 +178,7 @@ const {
 } = useTicketTransition()
 
 const flightClone = ref(null)
+const aboutTitleRef = ref(null)
 const flightCloneStyle = ref({})
 const coverPointerEvents = computed(() => (
   progress.value < 0.35 && !isComplete.value ? 'auto' : 'none'
@@ -346,11 +347,13 @@ watch(flightPhaseProgress, (value) => {
   if (flightClone.value) updateFlightCloneTransform(value)
 })
 
-watch(isComplete, (complete) => {
+watch(isComplete, async (complete) => {
   if (!complete) return
   document.body.classList.remove('is-transition-locked')
   detachTouchLock()
   emit('transition-complete')
+  await nextTick()
+  aboutTitleRef.value?.focus({ preventScroll: true })
 })
 
 onMounted(() => {
@@ -403,7 +406,7 @@ onUnmounted(() => {
 }
 
 .cover-identity p,
-.cover-identity span,
+.cover-identity h1,
 .cover-identity strong {
   margin: 0;
   font-size: 12px;
@@ -416,6 +419,11 @@ onUnmounted(() => {
   display: flex;
   gap: 28px;
   text-align: right;
+}
+
+.cover-identity h1 {
+  font-family: inherit;
+  font-weight: 400;
 }
 
 .cover-identity strong {
@@ -614,7 +622,7 @@ onUnmounted(() => {
   letter-spacing: 0.15em;
 }
 
-.about-intro h1 {
+.about-intro h2 {
   max-width: 10ch;
   font-size: clamp(42px, 4.3vw, 68px);
   line-height: 1.02;
@@ -698,7 +706,7 @@ onUnmounted(() => {
   max-width: 34ch;
   margin: 20px 0 0;
   color: var(--muted);
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.7;
 }
 
@@ -730,21 +738,21 @@ onUnmounted(() => {
 
 .capability-list h3 {
   font-family: 'Manrope', 'Noto Sans SC', sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   letter-spacing: 0.06em;
   line-height: 1.3;
 }
 
 .capability-keywords {
   margin-top: 6px !important;
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.55;
 }
 
 .capability-evidence {
   margin-top: 7px !important;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.55;
 }
 
@@ -843,7 +851,7 @@ onUnmounted(() => {
     padding: 156px 24px 50px;
   }
 
-  .about-intro h1 {
+  .about-intro h2 {
     max-width: 12ch;
     font-size: clamp(38px, 12vw, 52px);
   }
@@ -880,7 +888,7 @@ onUnmounted(() => {
   .capability-list h3,
   .capability-keywords,
   .capability-evidence {
-    font-size: 14px;
+    font-size: 15px;
   }
 }
 

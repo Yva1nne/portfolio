@@ -138,7 +138,7 @@ defineProps({
 
 .timeline-entry__role {
   margin: 18px 0 0;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1.5;
@@ -165,7 +165,7 @@ defineProps({
   position: relative;
   padding-left: 17px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.65;
 }
 
@@ -186,7 +186,7 @@ defineProps({
   margin-top: 30px;
   border-bottom: 1px solid currentColor;
   padding-bottom: 5px;
-  font-size: 12px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: 0.06em;
 }
