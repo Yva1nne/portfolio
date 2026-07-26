@@ -81,5 +81,9 @@ main {
     overflow-y: auto;
     overscroll-behavior-y: contain;
   }
+
+  main.has-mobile-player:has(.music-player.is-expanded) {
+    height: calc(100svh - 151px - env(safe-area-inset-bottom));
+  }
 }
 </style>
