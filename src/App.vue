@@ -6,6 +6,7 @@
     />
 
     <GlobalNav v-if="showProjects" />
+    <MusicPlayer v-if="showProjects" />
     <TimelinePage v-if="showProjects" />
     <ZaiSection v-if="showProjects" />
   </main>
@@ -14,6 +15,7 @@
 <script setup>
 import { ref, defineAsyncComponent } from 'vue'
 import GlobalNav from './components/GlobalNav.vue'
+import MusicPlayer from './components/MusicPlayer.vue'
 import TransitionPage from './views/TransitionPage.vue'
 
 const ZaiSection = defineAsyncComponent(() => import('./views/ZaiPage.vue'))
