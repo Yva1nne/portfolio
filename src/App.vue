@@ -5,6 +5,7 @@
       @transition-complete="onTransitionComplete"
     />
 
+    <TimelinePage v-if="showProjects" />
     <ZaiSection v-if="showProjects" />
   </main>
 </template>
@@ -14,6 +15,7 @@ import { ref, defineAsyncComponent } from 'vue'
 import TransitionPage from './views/TransitionPage.vue'
 
 const ZaiSection = defineAsyncComponent(() => import('./views/ZaiPage.vue'))
+const TimelinePage = defineAsyncComponent(() => import('./views/TimelinePage.vue'))
 
 const showProjects = ref(false)
 
