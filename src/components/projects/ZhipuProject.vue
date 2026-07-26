@@ -52,6 +52,7 @@
           ref="workflowViewport"
           class="workflow-viewport"
           :class="{ 'is-panning': isPanning }"
+          data-cursor-label="DRAG"
           tabindex="0"
           aria-label="城智大模型展示工作流画布。拖动画布平移，使用工具栏缩放；聚焦或点击节点查看说明。"
           @pointerdown="startPan"

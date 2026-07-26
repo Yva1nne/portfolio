@@ -1,5 +1,6 @@
 <template>
   <main>
+    <CustomCursor />
     <TransitionPage
       ref="transitionRef"
       @transition-complete="onTransitionComplete"
@@ -14,6 +15,7 @@
 
 <script setup>
 import { ref, defineAsyncComponent } from 'vue'
+import CustomCursor from './components/CustomCursor.vue'
 import GlobalNav from './components/GlobalNav.vue'
 import MusicPlayer from './components/MusicPlayer.vue'
 import TransitionPage from './views/TransitionPage.vue'

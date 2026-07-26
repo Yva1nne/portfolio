@@ -34,6 +34,7 @@
             class="ticket-stub"
             :class="{ 'is-dragging': isDragging }"
             :style="stubStyle"
+            data-cursor-label="DRAG"
             :disabled="!stubInteractive"
             :tabindex="isComplete ? -1 : 0"
             aria-label="拖动票根进入作品集，也可以按 Enter"
@@ -100,7 +101,7 @@
                     :href="item.href"
                     :target="item.href.startsWith('http') ? '_blank' : undefined"
                     :rel="item.href.startsWith('http') ? 'noreferrer' : undefined"
-                    :data-cursor="item.href.startsWith('http') ? 'VISIT' : undefined"
+                    :data-cursor-label="item.href.startsWith('http') ? 'VISIT' : undefined"
                   >
                     {{ item.value }}
                   </a>

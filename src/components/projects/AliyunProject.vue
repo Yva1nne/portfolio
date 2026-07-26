@@ -168,8 +168,8 @@
       </div>
       <div class="sources">
         <strong>公开概念来源</strong>
-        <a href="https://docs.ag-ui.com/" target="_blank" rel="noreferrer">AG-UI 官方文档 ↗</a>
-        <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noreferrer">Hermes Agent 官方仓库 ↗</a>
+        <a href="https://docs.ag-ui.com/" target="_blank" rel="noreferrer" data-cursor-label="VISIT">AG-UI 官方文档 ↗</a>
+        <a href="https://github.com/NousResearch/hermes-agent" target="_blank" rel="noreferrer" data-cursor-label="VISIT">Hermes Agent 官方仓库 ↗</a>
       </div>
       <details class="pending">
         <summary>查看待确认与不可披露边界</summary>
