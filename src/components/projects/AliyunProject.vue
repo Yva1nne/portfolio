@@ -86,17 +86,17 @@
       <header class="track-head">
         <div>
           <p class="kicker">02 / INTERNAL OPERATIONS ASSISTANT</p>
-          <h3 id="aliyun-operations-title">让 Agent 进入运维系统，也让经验可以沉淀。</h3>
+          <h3 id="aliyun-operations-title">把 Agent 接入运维系统的目标链路讲清楚。</h3>
         </div>
-        <span class="tag tag--confirmed">测试、优化与接入协同 · 已确认</span>
+        <span class="tag tag--pending">前期梳理完成 · 接入待实施</span>
       </header>
       <p class="intro">
-        下图是脱敏后的前端解释模型，用于说明平台、AG-UI 与 Hermes 的关系；它不是内部系统截图、部署拓扑或线上监控台。
+        下图是脱敏后的目标关系模型，用于解释平台、AG-UI 与 Hermes 的拟议接入方式；它不是已完成架构、内部系统截图、部署拓扑或线上监控台。
       </p>
 
       <div class="content-grid">
         <div>
-          <div class="architecture" aria-label="运维平台、AG-UI 与 Hermes 的双向连接">
+          <div class="architecture" aria-label="运维平台、AG-UI 与 Hermes 的目标双向连接">
             <template v-for="(node, index) in operationNodes" :key="node.id">
               <button
                 type="button"
@@ -191,7 +191,7 @@ const selectedOperationNode = ref('ag-ui')
 
 const tracks = [
   { id: 'database', number: '01', title: '数据库 AI 助手', flow: '功能设计 → Skills 优化 → 场景验证 → 商业化落地' },
-  { id: 'operations', number: '02', title: '内部运维 AI 助手', flow: '运维平台 ⇄ AG-UI ⇄ 云端 Hermes' },
+  { id: 'operations', number: '02', title: '内部运维 AI 助手', flow: '目标链路：运维平台 ⇄ AG-UI ⇄ 云端 Hermes' },
 ]
 
 const databaseSteps = [
@@ -220,21 +220,21 @@ const databaseSteps = [
 const operationNodes = [
   {
     id: 'platform', eyebrow: 'CONTEXT', title: '脱敏运维平台', brief: '任务与状态入口',
-    status: '已确认 · 脱敏表达', kind: 'confirmed',
-    detail: '个人已确认参与内部运维 AI 助手的测试与方案优化；页面以通用名称表示承载任务上下文和状态的平台。',
+    status: '已确认 · 前期梳理', kind: 'confirmed',
+    detail: '个人已确认完成现有能力与接入情况梳理，并形成相关功能文档和需求；页面以通用名称表示目标平台。',
     boundary: '不公开平台真名、账号、界面、任务数据或权限结构。',
   },
   {
     id: 'ag-ui', eyebrow: 'PROTOCOL', title: 'AG-UI', brief: '双向流式交互',
-    status: '公开概念 + 已确认接入协同', kind: 'public',
-    detail: 'AG-UI 在这里解释 Agent 与前端之间的双向事件、流式内容和状态更新；已确认事实是协同推进相关平台接入。',
-    boundary: '公开事件族仅作教学示意，不代表内部协议抓包、实际参数或完整实现。',
+    status: '公开概念 + 待实施方案', kind: 'public',
+    detail: 'AG-UI 在这里解释 Agent 与前端之间的双向事件、流式内容和状态更新；已确认事实仅到接入需求与方案梳理。',
+    boundary: '公开事件族仅作教学示意；相关接入尚待实施，不代表内部协议抓包、实际参数或完整实现。',
   },
   {
     id: 'hermes', eyebrow: 'AGENT RUNTIME', title: '云端 Hermes', brief: '按需调用能力',
-    status: '已确认 · 抽象层级', kind: 'confirmed',
-    detail: '以脱敏方式表达云端 Hermes 与平台的连接，以及 Agent 使用工具、Skills 和经验上下文的产品关系。',
-    boundary: '不公开部署拓扑、模型参数、工具清单、Memory 结构或内部运行数据。',
+    status: '公开概念 + 待实施目标', kind: 'public',
+    detail: '以脱敏方式表达云端 Hermes 与目标平台的拟议连接，以及 Agent 使用工具、Skills 和经验上下文的产品关系。',
+    boundary: '相关接入和优化尚待实施；不公开部署拓扑、模型参数、工具清单、Memory 结构或内部运行数据。',
   },
 ]
 
