@@ -1,6 +1,5 @@
 <template>
   <section
-    id="work"
     class="projects-page"
     aria-labelledby="work-title"
   >

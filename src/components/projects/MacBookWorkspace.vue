@@ -88,6 +88,8 @@
         src="/macbook-frame.png"
         alt=""
         aria-hidden="true"
+        loading="lazy"
+        decoding="async"
         draggable="false"
       >
     </div>

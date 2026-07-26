@@ -65,9 +65,12 @@
     >
       <div class="about-stage">
         <img
+          v-if="showAboutArtwork"
           class="notebook-underlay"
           src="/portfolio/image 7.png"
           alt=""
+          loading="lazy"
+          decoding="async"
           draggable="false"
         />
 
@@ -78,6 +81,8 @@
               class="landed-paperclip"
               src="/portfolio/image 10.png"
               alt=""
+              loading="lazy"
+              decoding="async"
               :style="paperclipStyle"
               draggable="false"
             />
@@ -192,6 +197,9 @@ const mainTicketCoverStyle = computed(() => ({
 const landedTicketStyle = computed(() => ({
   opacity: progress.value >= 0.85 ? 1 : 0,
 }))
+const showAboutArtwork = computed(() => (
+  isComplete.value || progress.value > 0.04
+))
 
 let dragStartX = 0
 let dragStartY = 0
