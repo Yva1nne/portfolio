@@ -39,6 +39,7 @@
             :tabindex="isComplete ? -1 : 0"
             aria-label="拖动票根进入作品集，也可以按 Enter"
             type="button"
+            @click="onStubClick"
             @keydown="onStubKeydown"
             @pointerdown="onStubPointerDown"
           >
@@ -173,6 +174,7 @@ const {
   cancelDrag,
   addScrollDelta,
   startAutoComplete,
+  reset,
 } = useTicketTransition()
 
 const flightClone = ref(null)
@@ -218,6 +220,11 @@ function onStubPointerDown(event) {
 function onStubKeydown(event) {
   if (event.key !== 'Enter' && event.key !== ' ') return
   event.preventDefault()
+  forceComplete()
+}
+
+function onStubClick(event) {
+  if (event.detail !== 0) return
   forceComplete()
 }
 
@@ -355,6 +362,7 @@ onMounted(() => {
 onUnmounted(() => {
   cleanupDrag()
   detachTouchLock()
+  reset()
   document.body.classList.remove('is-transition-locked')
 })
 </script>

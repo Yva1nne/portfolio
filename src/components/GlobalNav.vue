@@ -37,7 +37,7 @@
     >
       <header>
         <span>NAVIGATION</span>
-        <button type="button" aria-label="关闭章节菜单" @click="closeMenu">
+        <button ref="closeButton" type="button" aria-label="关闭章节菜单" @click="closeMenu">
           CLOSE
         </button>
       </header>
@@ -69,6 +69,7 @@ const navItems = [
 const activeId = ref(navItems[0].id)
 const menuOpen = ref(false)
 const menuButton = ref(null)
+const closeButton = ref(null)
 
 const observedSections = new Map()
 const visibleSections = new Map()
@@ -151,8 +152,15 @@ function closeMenu() {
   nextTick(() => menuButton.value?.focus({ preventScroll: true }))
 }
 
-function toggleMenu() {
-  menuOpen.value = !menuOpen.value
+async function toggleMenu() {
+  if (menuOpen.value) {
+    closeMenu()
+    return
+  }
+
+  menuOpen.value = true
+  await nextTick()
+  closeButton.value?.focus({ preventScroll: true })
 }
 
 function navigateTo(event, id) {

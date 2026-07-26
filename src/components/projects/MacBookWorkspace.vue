@@ -12,7 +12,11 @@
           '--folder-origin-y': folderOrigin.y,
         }"
       >
-        <Transition name="screen-mode" mode="out-in">
+        <Transition
+          name="screen-mode"
+          mode="out-in"
+          @enter="focusPendingTarget"
+        >
           <div
             v-if="!activeProject"
             key="desktop"
@@ -40,6 +44,7 @@
                 :key="project.id"
                 type="button"
                 class="desktop-folder"
+                :data-project-id="project.id"
                 data-cursor-label="OPEN"
                 @click="openProject(project.id, $event)"
               >
@@ -62,7 +67,7 @@
                   type="button"
                   class="window-close"
                   aria-label="关闭项目窗口，回到项目桌面"
-                  @click="$emit('close')"
+                  @click="closeProject"
                 ></button>
                 <span></span>
                 <span></span>
@@ -92,7 +97,7 @@
 <script setup>
 import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
 
-defineProps({
+const props = defineProps({
   projects: {
     type: Array,
     required: true,
@@ -113,6 +118,7 @@ const folderOrigin = reactive({ x: '50%', y: '48%' })
 
 let entryObserver = null
 let clockTimer = null
+let pendingFocusTarget = null
 
 function updateClock() {
   const now = new Date()
@@ -138,7 +144,32 @@ function openProject(projectId, event) {
     folderOrigin.y = `${((folderRect.top + folderRect.height / 2 - rect.top) / rect.height) * 100}%`
   }
 
+  pendingFocusTarget = { type: 'close' }
   emit('select', projectId)
+}
+
+function closeProject() {
+  pendingFocusTarget = {
+    type: 'folder',
+    projectId: props.activeProject?.id,
+  }
+  emit('close')
+}
+
+function focusPendingTarget(element) {
+  const focusTarget = pendingFocusTarget
+  pendingFocusTarget = null
+  if (!focusTarget) return
+
+  if (focusTarget.type === 'close') {
+    element.querySelector('.window-close')?.focus({ preventScroll: true })
+    return
+  }
+
+  const folder = Array.from(element.querySelectorAll('.desktop-folder')).find(
+    (candidate) => candidate.dataset.projectId === focusTarget.projectId,
+  )
+  folder?.focus({ preventScroll: true })
 }
 
 onMounted(() => {
@@ -343,7 +374,7 @@ onBeforeUnmount(() => {
 
 .browser-chrome {
   display: grid;
-  grid-template-columns: 64px minmax(0, 1fr) 64px;
+  grid-template-columns: 76px minmax(0, 1fr) 76px;
   align-items: center;
   border-bottom: 1px solid rgba(20, 23, 24, 0.14);
   background: rgba(255, 255, 255, 0.9);
@@ -360,27 +391,45 @@ onBeforeUnmount(() => {
 
 .window-dots {
   display: flex;
+  align-items: center;
   gap: 6px;
   padding-left: 14px;
 }
 
-.window-dots span,
-.window-close {
+.window-dots span {
+  flex: 0 0 auto;
   width: 9px;
   height: 9px;
-  border: 0;
   border-radius: 50%;
-  padding: 0;
 }
 
 .window-close {
-  background: #ff625c;
+  position: relative;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  background: transparent;
   cursor: pointer;
+}
+
+.window-close::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ff625c;
+  content: '';
+  transform: translate(-50%, -50%);
 }
 
 .window-close:focus-visible {
   outline: 2px solid #5f1614;
-  outline-offset: 3px;
+  outline-offset: -3px;
 }
 
 .window-dots span:nth-child(2) {
@@ -473,7 +522,7 @@ onBeforeUnmount(() => {
   }
 
   .browser-chrome {
-    grid-template-columns: 46px minmax(0, 1fr) 46px;
+    grid-template-columns: 64px minmax(0, 1fr) 64px;
   }
 
   .window-dots {
@@ -482,7 +531,7 @@ onBeforeUnmount(() => {
   }
 
   .window-dots span,
-  .window-close {
+  .window-close::before {
     width: 7px;
     height: 7px;
   }

@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { projects } from '../../data/portfolio.js'
 
 const project = projects.defect
@@ -97,6 +97,15 @@ function seekTo(index) {
   video.currentTime = (video.duration * index) / stages.length
   currentTime.value = video.currentTime
 }
+
+onBeforeUnmount(() => {
+  const video = videoRef.value
+  if (!video) return
+
+  video.pause()
+  video.removeAttribute('src')
+  video.load()
+})
 </script>
 
 <style scoped>
@@ -281,6 +290,12 @@ video {
 
   .result-note h4 {
     max-width: none;
+  }
+
+  .project-lead > span,
+  .result-note > span,
+  .result-note dd {
+    font-size: 0.9375rem;
   }
 }
 
