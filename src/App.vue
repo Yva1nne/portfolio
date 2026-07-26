@@ -1,5 +1,8 @@
 <template>
-  <main>
+  <main
+    :class="{ 'has-mobile-player': showProjects }"
+    @scroll.passive="forwardMobileScroll"
+  >
     <CustomCursor />
     <TransitionPage
       ref="transitionRef"
@@ -35,6 +38,10 @@ const showWork = ref(false)
 const workAnchor = ref(null)
 let workObserver = null
 
+function forwardMobileScroll() {
+  window.dispatchEvent(new Event('scroll'))
+}
+
 async function onTransitionComplete() {
   showProjects.value = true
   await nextTick()
@@ -65,5 +72,14 @@ main {
 
 .work-anchor {
   min-height: 100svh;
+}
+
+@media (max-width: 1080px), (any-pointer: coarse) {
+  main.has-mobile-player {
+    height: calc(100svh - 84px - env(safe-area-inset-bottom));
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
 }
 </style>

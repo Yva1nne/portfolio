@@ -15,7 +15,7 @@
           </span>
           <div>
             <button type="button" @click="toggleExperienceMode">
-              {{ showStaticPreview ? '加载在线体验' : '查看静态预览' }}
+              {{ experienceActionLabel }}
             </button>
             <a
               :href="project.demoUrl"
@@ -99,6 +99,8 @@ const project = projects.ganttodo
 const showStaticPreview = ref(true)
 const frameState = ref('static')
 let frameTimeout = null
+let frameController = null
+let frameAttempt = 0
 
 const frameStatus = computed(() => {
   const labels = {
@@ -109,10 +111,15 @@ const frameStatus = computed(() => {
   }
   return labels[frameState.value]
 })
+const experienceActionLabel = computed(() => {
+  if (frameState.value === 'loading') return '取消在线加载'
+  return showStaticPreview.value ? '加载在线体验' : '查看静态预览'
+})
 const fallbackLabel = computed(() => (
-  frameState.value === 'error'
-    ? 'ONLINE UNAVAILABLE / STATIC FALLBACK'
-    : 'STATIC FALLBACK / ALWAYS AVAILABLE'
+  ({
+    error: 'ONLINE UNAVAILABLE / STATIC FALLBACK',
+    loading: 'CHECKING ONLINE / STATIC READY',
+  })[frameState.value] || 'STATIC FALLBACK / ALWAYS AVAILABLE'
 ))
 
 function clearFrameTimeout() {
@@ -120,15 +127,49 @@ function clearFrameTimeout() {
   frameTimeout = null
 }
 
-function showOnlineExperience() {
+function clearFrameRequest() {
+  frameController?.abort()
+  frameController = null
+}
+
+async function showOnlineExperience() {
+  frameAttempt += 1
+  const attempt = frameAttempt
   clearFrameTimeout()
+  clearFrameRequest()
   frameState.value = 'loading'
-  showStaticPreview.value = false
-  frameTimeout = window.setTimeout(() => showFallback('timeout'), 12_000)
+  showStaticPreview.value = true
+
+  frameController = new AbortController()
+  frameTimeout = window.setTimeout(() => {
+    if (attempt === frameAttempt) showFallback('timeout')
+  }, 12_000)
+
+  try {
+    await window.fetch(project.demoUrl, {
+      cache: 'no-store',
+      mode: 'no-cors',
+      signal: frameController.signal,
+    })
+
+    if (attempt !== frameAttempt || frameState.value !== 'loading') return
+
+    clearFrameTimeout()
+    frameController = null
+    showStaticPreview.value = false
+    frameTimeout = window.setTimeout(() => {
+      if (attempt === frameAttempt) showFallback('timeout')
+    }, 12_000)
+  } catch (error) {
+    if (attempt !== frameAttempt) return
+    showFallback(error?.name === 'AbortError' ? 'timeout' : 'error')
+  }
 }
 
 function showFallback(reason = 'manual') {
+  frameAttempt += 1
   clearFrameTimeout()
+  clearFrameRequest()
   frameState.value = reason === 'manual' ? 'static' : 'error'
   showStaticPreview.value = true
 }
@@ -139,12 +180,16 @@ function toggleExperienceMode() {
 }
 
 function onFrameLoad() {
-  if (showStaticPreview.value) return
+  if (showStaticPreview.value || frameState.value !== 'loading') return
   clearFrameTimeout()
   frameState.value = 'online'
 }
 
-onBeforeUnmount(clearFrameTimeout)
+onBeforeUnmount(() => {
+  frameAttempt += 1
+  clearFrameTimeout()
+  clearFrameRequest()
+})
 </script>
 
 <style scoped>

@@ -344,7 +344,7 @@ function syncMobileLayout(event) {
 
 function syncDockPosition() {
   dockFrame = 0
-  if (window.innerWidth <= 760) {
+  if (window.matchMedia('(max-width: 1080px), (any-pointer: coarse)').matches) {
     dockAtTop.value = false
     return
   }
@@ -692,6 +692,35 @@ onBeforeUnmount(() => {
     padding: 8px 10px;
   }
 
+  .music-player:not(.is-expanded) {
+    width: 58px;
+    padding: 8px;
+  }
+
+  .music-player:not(.is-expanded) .player-primary {
+    grid-template-columns: 40px;
+    gap: 0;
+  }
+
+  .music-player:not(.is-expanded) .play-button,
+  .music-player:not(.is-expanded) .track-copy {
+    display: none;
+  }
+
+  .music-player:not(.is-expanded) .player-end {
+    min-width: 0;
+  }
+
+  .music-player:not(.is-expanded) .mobile-details-toggle {
+    font-size: 0;
+  }
+
+  .music-player:not(.is-expanded) .mobile-details-toggle::after {
+    content: "MUSIC";
+    font: 800 7px/1 var(--font-sans, 'Manrope', sans-serif);
+    letter-spacing: 0.06em;
+  }
+
   .music-player.is-expanded {
     width: min(340px, calc(100vw - 24px));
   }
@@ -704,7 +733,7 @@ onBeforeUnmount(() => {
   .track-copy strong { font-size: 11px; }
 }
 
-@media (min-width: 761px) {
+@media (min-width: 1081px) {
   .music-player.is-docked-top {
     top: max(12px, env(safe-area-inset-top));
     bottom: auto;

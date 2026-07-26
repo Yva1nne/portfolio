@@ -573,6 +573,11 @@ onBeforeUnmount(() => {
   touch-action: none;
 }
 
+.workflow-viewport:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -3px;
+}
+
 .workflow-viewport.is-panning { cursor: grabbing; }
 
 .workflow-toolbar {
@@ -738,7 +743,7 @@ onBeforeUnmount(() => {
   font: 500 clamp(0.9rem, 1.4vw, 1.08rem)/1.75 var(--font-sans, sans-serif);
 }
 
-@media (max-width: 1080px) {
+@media (max-width: 1080px), (any-pointer: coarse) {
   .workflow-viewport {
     overflow-x: auto;
     overflow-y: hidden;
