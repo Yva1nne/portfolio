@@ -55,7 +55,10 @@ export const timelineItems = [
     title: '浙江大学 · 本科',
     role: '电子科学与技术',
     summary: '建立电子信息与工程技术基础。',
-    evidence: [],
+    evidence: [
+      '电子科学与技术本科，2024 年毕业。',
+      '获校级优秀毕业论文，并多次获得校奖学金。',
+    ],
   },
   {
     id: 'master',
@@ -64,7 +67,10 @@ export const timelineItems = [
     title: '浙江大学 · 硕士',
     role: '电子信息',
     summary: '研究与项目逐步从算法验证延伸到产品定义、系统集成与真实场景应用。',
-    evidence: [],
+    evidence: [
+      '电子信息（集成电路工程）方向，预计 2027 年毕业。',
+      '研究与实践聚焦工业视觉模型训练、系统集成和 AI 产品设计。',
+    ],
     current: true,
   },
   {
@@ -96,7 +102,10 @@ export const timelineItems = [
     title: 'Smart Ganttodo',
     role: 'AI 产品经理 / 独立开发',
     summary: '验证自然语言多意图解析、结构化 actions、甘特图状态与拖拽修正的个人任务规划链路。',
-    evidence: [],
+    evidence: [
+      '独立完成自然语言多意图解析、结构化 actions 与甘特图交互原型。',
+      '保留拖拽修正，让模型先生成可编辑初稿，而不是替用户直接执行。',
+    ],
     projectId: 'ganttodo',
   },
   {

@@ -48,24 +48,24 @@
       </div>
 
       <div class="workflow-shell" :class="{ 'has-panel': selectedNode }">
+        <div class="workflow-toolbar" role="group" aria-label="工作流视角控制" @pointerdown.stop>
+          <button type="button" :disabled="!canZoomOut" aria-label="缩小工作流画布" @click="zoomOut">−</button>
+          <output aria-live="polite">{{ zoomPercent }}</output>
+          <button type="button" :disabled="!canZoomIn" aria-label="放大工作流画布" @click="zoomIn">＋</button>
+          <button type="button" class="reset-button" aria-label="重置工作流视角" @click="resetView">1:1</button>
+        </div>
+
         <div
           ref="workflowViewport"
           class="workflow-viewport"
           :class="{ 'is-panning': isPanning }"
           data-cursor-label="DRAG"
           tabindex="0"
-          aria-label="城智大模型展示工作流画布。拖动画布平移，使用工具栏缩放；聚焦或点击节点查看说明。"
+          aria-label="城智大模型展示工作流画布。桌面拖动画布平移，触屏左右滑动浏览；使用工具栏缩放，聚焦或点击节点查看说明。"
           @pointerdown="startPan"
           @wheel="onWheel"
           @keydown="onViewportKeydown"
         >
-          <div class="workflow-toolbar" role="group" aria-label="工作流视角控制" @pointerdown.stop>
-            <button type="button" :disabled="!canZoomOut" aria-label="缩小工作流画布" @click="zoomOut">−</button>
-            <output aria-live="polite">{{ zoomPercent }}</output>
-            <button type="button" :disabled="!canZoomIn" aria-label="放大工作流画布" @click="zoomIn">＋</button>
-            <button type="button" class="reset-button" aria-label="重置工作流视角" @click="resetView">1:1</button>
-          </div>
-
           <div ref="workflowCanvas" class="workflow-canvas" :style="canvasStyle">
             <svg class="workflow-edges" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
               <path v-for="edge in edges" :key="edge.id" :d="edgePath(edge)" vector-effect="non-scaling-stroke" />
@@ -118,7 +118,7 @@
         </aside>
       </div>
 
-      <p class="workflow-hint">拖动节点可调整本次浏览中的布局；不会编辑流程，也不会保存节点位置。</p>
+      <p class="workflow-hint">桌面可拖动画布与节点；触屏左右滑动画布。节点调整仅影响本次浏览，不会编辑或保存流程。</p>
     </section>
 
     <section id="zhipu-work" class="reading-section reading-section-split">
@@ -247,6 +247,7 @@ function zoomOut() { zoom(-zoomStep) }
 
 function resetView() {
   setView(0, 0, 1)
+  workflowViewport.value?.scrollTo({ left: 0, top: 0 })
 }
 
 function startPan(event) {
@@ -744,11 +745,30 @@ onBeforeUnmount(() => {
   .system-boundary { grid-template-columns: 1fr; }
   .system-boundary > div:first-child { border-right: 0; border-bottom: 1px solid rgba(37, 42, 49, 0.16); }
   .workflow-shell { height: 36rem; }
-  .workflow-viewport { touch-action: pan-y; }
+  .workflow-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    touch-action: pan-x pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
   .workflow-canvas { width: 68rem; min-height: 36rem; }
-  .workflow-node { width: 8rem; }
+  .workflow-node { width: 8rem; touch-action: pan-x pan-y; }
   .node-panel { top: auto; left: 0.6rem; right: 0.6rem; bottom: 0.6rem; width: auto; max-height: 44%; border-left-width: 1px; border-top: 2px solid var(--project-accent); transform: translateY(1rem); }
   .node-panel.is-open { transform: translateY(0); }
+  .project-lead > span,
+  .reading-section p,
+  .reading-section header > span,
+  .reading-section dd,
+  .reading-section li,
+  .system-boundary span,
+  .node-panel > span,
+  .boundary-section blockquote {
+    font-size: 0.9375rem;
+  }
+  .system-boundary strong { font-size: 0.9375rem; }
+  .workflow-hint { font-size: 0.8125rem !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -7,7 +7,7 @@
     </header>
 
     <div class="demo-layout">
-      <section class="experience" aria-label="Smart Ganttodo 在线体验">
+      <section class="experience" aria-label="Smart Ganttodo 项目体验">
         <div class="experience-bar">
           <span>
             <i :class="{ 'is-online': !showStaticPreview }"></i>
@@ -15,7 +15,7 @@
           </span>
           <div>
             <button type="button" @click="showStaticPreview = !showStaticPreview">
-              {{ showStaticPreview ? '返回在线体验' : '查看静态预览' }}
+              {{ showStaticPreview ? '加载在线体验' : '查看静态预览' }}
             </button>
             <a
               :href="project.demoUrl"
@@ -34,7 +34,6 @@
             :src="project.demoUrl"
             title="Smart Ganttodo 在线体验"
             loading="lazy"
-            @error="showStaticPreview = true"
           ></iframe>
 
           <div
@@ -96,7 +95,7 @@ import { computed, ref } from 'vue'
 import { projects } from '../../data/portfolio.js'
 
 const project = projects.ganttodo
-const showStaticPreview = ref(false)
+const showStaticPreview = ref(true)
 
 const frameStatus = computed(() => {
   if (showStaticPreview.value) return '静态预览模式'
@@ -368,6 +367,17 @@ pre {
     align-items: flex-start;
     flex-direction: column;
     padding: 0.7rem 0.8rem;
+  }
+
+  .project-lead > span,
+  .iframe-fallback span,
+  .example-block blockquote,
+  .boundary {
+    font-size: 0.9375rem !important;
+  }
+
+  pre {
+    font-size: 0.75rem;
   }
 }
 </style>

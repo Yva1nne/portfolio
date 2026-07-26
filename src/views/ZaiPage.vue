@@ -526,6 +526,13 @@ onBeforeUnmount(() => {
     grid-template-columns: 1fr;
   }
 
+  .project-summary,
+  .project-copy dd,
+  .project-copy.is-overview li span,
+  .project-copy small {
+    font-size: 0.9375rem;
+  }
+
   .compact-project-detail {
     display: block;
     width: calc(100vw - 16px);

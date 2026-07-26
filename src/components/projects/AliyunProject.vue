@@ -7,7 +7,7 @@
     <header class="project-head">
       <div>
         <p class="kicker">{{ project.kicker }}</p>
-        <h2 id="aliyun-project-title">{{ project.title }}</h2>
+        <h3 id="aliyun-project-title">{{ project.title }}</h3>
       </div>
       <p class="role"><span class="tag tag--confirmed">已确认</span>{{ project.role }}</p>
     </header>
@@ -40,7 +40,7 @@
       <header class="track-head">
         <div>
           <p class="kicker">01 / DATABASE AI ASSISTANT</p>
-          <h3 id="aliyun-database-title">把模型能力组织成可以交付的产品功能。</h3>
+          <h4 id="aliyun-database-title">把模型能力组织成可以交付的产品功能。</h4>
         </div>
         <span class="tag tag--confirmed">个人工作主线 · 已确认</span>
       </header>
@@ -86,7 +86,7 @@
       <header class="track-head">
         <div>
           <p class="kicker">02 / INTERNAL OPERATIONS ASSISTANT</p>
-          <h3 id="aliyun-operations-title">把 Agent 接入运维系统的目标链路讲清楚。</h3>
+          <h4 id="aliyun-operations-title">把 Agent 接入运维系统的目标链路讲清楚。</h4>
         </div>
         <span class="tag tag--pending">前期梳理完成 · 接入待实施</span>
       </header>
@@ -148,7 +148,7 @@
         <header class="track-head">
           <div>
             <p class="kicker">HARNESS IMPROVEMENT</p>
-            <h4 id="harness-title">从一次 badcase，到一次受控更新。</h4>
+            <h5 id="harness-title">从一次 badcase，到一次受控更新。</h5>
           </div>
           <span class="tag tag--pending">抽象闭环 · 细节待确认</span>
         </header>
@@ -267,6 +267,7 @@ const selectedOperationNodeData = computed(() => (
   --paper: #f7f4ed;
   --ink: #20211f;
   --muted: #6a6a64;
+  --accent-text: #a84316;
   --line: rgba(32, 33, 31, 0.17);
   --strong-line: rgba(32, 33, 31, 0.38);
   container: aliyun / inline-size;
@@ -285,7 +286,7 @@ const selectedOperationNodeData = computed(() => (
 .aliyun-project :where(button, a, summary) { font: inherit; }
 .aliyun-project :where(button, summary) { color: inherit; }
 .aliyun-project :where(button, a, summary):focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 2px solid var(--accent-text);
   outline-offset: 3px;
 }
 
@@ -302,22 +303,22 @@ const selectedOperationNodeData = computed(() => (
 
 .kicker {
   margin: 0 0 7px;
-  color: var(--accent);
+  color: var(--accent-text);
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.12em;
 }
 
-.project-head h2,
-.track-head h3,
-.track-head h4 {
+.project-head h3,
+.track-head h4,
+.track-head h5 {
   margin: 0;
   font-family: 'Fraunces', 'Noto Serif SC', serif;
   line-height: 1.1;
 }
-.project-head h2 { max-width: 18em; font-size: clamp(22px, 3.2cqw, 34px); }
-.track-head h3 { font-size: clamp(18px, 2.5cqw, 26px); }
-.track-head h4 { font-size: clamp(16px, 2cqw, 21px); }
+.project-head h3 { max-width: 18em; font-size: clamp(22px, 3.2cqw, 34px); }
+.track-head h4 { font-size: clamp(18px, 2.5cqw, 26px); }
+.track-head h5 { font-size: clamp(16px, 2cqw, 21px); }
 
 .role {
   display: flex;
@@ -394,7 +395,7 @@ const selectedOperationNodeData = computed(() => (
 .track-tabs button:hover,
 .track-tabs button.is-active { background: rgba(255, 255, 255, 0.35); }
 .track-tabs button.is-active::after { opacity: 1; transform: scaleX(1); }
-.track-tabs button > span { grid-row: 1 / 3; color: var(--accent); font-size: 10px; font-weight: 800; }
+.track-tabs button > span { grid-row: 1 / 3; color: var(--accent-text); font-size: 10px; font-weight: 800; }
 .track-tabs strong { font-size: clamp(12px, 1.5cqw, 15px); }
 .track-tabs small {
   overflow: hidden;
@@ -444,7 +445,7 @@ const selectedOperationNodeData = computed(() => (
 .architecture-node.is-selected { box-shadow: inset 0 -2px var(--accent); }
 .step-list button > span,
 .architecture-node > span,
-.harness li span { color: var(--accent); font-size: 8px; font-weight: 800; }
+.harness li span { color: var(--accent-text); font-size: 8px; font-weight: 800; }
 .step-list strong,
 .architecture-node strong { font-size: 11px; }
 .step-list small,
@@ -475,7 +476,7 @@ const selectedOperationNodeData = computed(() => (
   height: 18px;
   margin: 0 -14px;
   background: var(--paper);
-  color: var(--accent);
+  color: var(--accent-text);
   font-style: normal;
   pointer-events: none;
 }
@@ -517,13 +518,13 @@ const selectedOperationNodeData = computed(() => (
 .event-stream summary::-webkit-details-marker,
 .pending summary::-webkit-details-marker { display: none; }
 .event-stream summary::after,
-.pending summary::after { color: var(--accent); content: '+'; }
+.pending summary::after { color: var(--accent-text); content: '+'; }
 .event-stream[open] summary::after,
 .pending[open] summary::after { content: '−'; }
 .event-stream summary small { margin-left: auto; color: var(--muted); font-size: 8px; }
 .event-stream ol { grid-template-columns: repeat(5, minmax(0, 1fr)); padding-top: 4px; }
 .event-stream li { display: grid; gap: 7px; min-width: 0; padding: 12px 8px; border-top: 1px solid var(--strong-line); }
-.event-stream code { overflow-wrap: anywhere; color: var(--accent); font-size: 7px; font-weight: 800; }
+.event-stream code { overflow-wrap: anywhere; color: var(--accent-text); font-size: 7px; font-weight: 800; }
 .event-stream li span,
 .event-stream > p { color: var(--muted); font-size: 8px; line-height: 1.5; }
 .event-stream > p { margin: 0 0 12px; }
@@ -546,7 +547,7 @@ const selectedOperationNodeData = computed(() => (
   z-index: 1;
   width: 14px;
   background: var(--paper);
-  color: var(--accent);
+  color: var(--accent-text);
   content: '→';
   text-align: center;
   transform: translateY(-50%);
@@ -607,7 +608,28 @@ const selectedOperationNodeData = computed(() => (
   .event-stream summary small { display: none; }
 }
 
-@media (max-width: 760px) { .aliyun-project { padding: 16px; } }
+@media (max-width: 760px) {
+  .aliyun-project { padding: 16px; }
+  .summary,
+  .intro,
+  .detail p,
+  .detail > small,
+  .event-stream li span,
+  .event-stream > p,
+  .pending ul,
+  .security-note {
+    font-size: 15px;
+  }
+  .role,
+  .legend,
+  .sources { font-size: 13px; }
+  .tag { font-size: 11px; }
+  .step-list strong,
+  .architecture-node strong { font-size: 15px; }
+  .step-list small,
+  .architecture-node small { font-size: 12px; }
+  .event-stream code { font-size: 11px; }
+}
 @media (prefers-reduced-motion: reduce) {
   .track-tabs button::after { transition: none; }
   .connector b { display: none; animation: none; }
