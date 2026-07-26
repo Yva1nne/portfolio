@@ -175,6 +175,10 @@ function showFallback(reason = 'manual') {
 }
 
 function toggleExperienceMode() {
+  if (frameState.value === 'loading') {
+    showFallback('manual')
+    return
+  }
   if (showStaticPreview.value) showOnlineExperience()
   else showFallback('manual')
 }
