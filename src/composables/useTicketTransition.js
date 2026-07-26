@@ -162,10 +162,32 @@ export function useTicketTransition() {
     isTransitioning.value = true
     const startProgress = progress.value
     const endProgress = target
+    targetProgress.value = target
+
+    if (
+      typeof window !== 'undefined'
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    ) {
+      if (rafId) cancelAnimationFrame(rafId)
+      rafId = null
+      progress.value = endProgress
+      updatePhase()
+      isTransitioning.value = false
+
+      if (target === 0) {
+        dragDistance = 0
+        scrollDelta = 0
+        dragOffset.value = { x: 0, y: 0 }
+        targetProgress.value = 0
+      } else {
+        isComplete.value = true
+        targetProgress.value = 1.0
+      }
+      return
+    }
+
     const duration = target === 0 ? 300 : ANIM_DURATION // faster bounce-back
     const startTime = performance.now()
-
-    targetProgress.value = target
 
     function animate(now) {
       const elapsed = now - startTime
