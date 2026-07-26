@@ -309,7 +309,7 @@ onBeforeUnmount(() => {
   .menu-button {
     display: flex;
     width: 82px;
-    min-height: 38px;
+    min-height: 44px;
     align-items: center;
     justify-content: space-between;
     gap: 12px;

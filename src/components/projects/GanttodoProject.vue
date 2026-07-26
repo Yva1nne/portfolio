@@ -9,12 +9,12 @@
     <div class="demo-layout">
       <section class="experience" aria-label="Smart Ganttodo 项目体验">
         <div class="experience-bar">
-          <span>
-            <i :class="{ 'is-online': !showStaticPreview }"></i>
+          <span aria-live="polite">
+            <i :class="{ 'is-online': frameState === 'online' }"></i>
             {{ frameStatus }}
           </span>
           <div>
-            <button type="button" @click="showStaticPreview = !showStaticPreview">
+            <button type="button" @click="toggleExperienceMode">
               {{ showStaticPreview ? '加载在线体验' : '查看静态预览' }}
             </button>
             <a
@@ -34,13 +34,14 @@
             :src="project.demoUrl"
             title="Smart Ganttodo 在线体验"
             loading="lazy"
+            referrerpolicy="no-referrer"
+            @load="onFrameLoad"
+            @error="showFallback('error')"
           ></iframe>
 
           <div
             v-else
             class="iframe-fallback"
-            role="status"
-            aria-live="polite"
           >
             <img
               src="/project/ganttodo-preview.png"
@@ -48,7 +49,7 @@
               loading="lazy"
             >
             <div>
-              <p>STATIC FALLBACK / ALWAYS AVAILABLE</p>
+              <p>{{ fallbackLabel }}</p>
               <h4>不等待网络，也能先看懂项目。</h4>
               <span>这张预览来自真实项目界面；在线嵌入受网络或站点策略影响时，可继续用上方核心链路和新窗口入口。</span>
             </div>
@@ -91,16 +92,59 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, onBeforeUnmount, ref } from 'vue'
 import { projects } from '../../data/portfolio.js'
 
 const project = projects.ganttodo
 const showStaticPreview = ref(true)
+const frameState = ref('static')
+let frameTimeout = null
 
 const frameStatus = computed(() => {
-  if (showStaticPreview.value) return '静态预览模式'
-  return '在线嵌入模式'
+  const labels = {
+    static: '静态预览模式',
+    loading: '正在连接在线体验',
+    online: '在线嵌入模式',
+    error: '在线体验不可用，已回到静态预览',
+  }
+  return labels[frameState.value]
 })
+const fallbackLabel = computed(() => (
+  frameState.value === 'error'
+    ? 'ONLINE UNAVAILABLE / STATIC FALLBACK'
+    : 'STATIC FALLBACK / ALWAYS AVAILABLE'
+))
+
+function clearFrameTimeout() {
+  window.clearTimeout(frameTimeout)
+  frameTimeout = null
+}
+
+function showOnlineExperience() {
+  clearFrameTimeout()
+  frameState.value = 'loading'
+  showStaticPreview.value = false
+  frameTimeout = window.setTimeout(() => showFallback('timeout'), 12_000)
+}
+
+function showFallback(reason = 'manual') {
+  clearFrameTimeout()
+  frameState.value = reason === 'manual' ? 'static' : 'error'
+  showStaticPreview.value = true
+}
+
+function toggleExperienceMode() {
+  if (showStaticPreview.value) showOnlineExperience()
+  else showFallback('manual')
+}
+
+function onFrameLoad() {
+  if (showStaticPreview.value) return
+  clearFrameTimeout()
+  frameState.value = 'online'
+}
+
+onBeforeUnmount(clearFrameTimeout)
 </script>
 
 <style scoped>

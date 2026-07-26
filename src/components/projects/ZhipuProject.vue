@@ -670,6 +670,7 @@ onBeforeUnmount(() => {
 }
 
 .workflow-node.is-selected { outline: 2px solid var(--node-color); outline-offset: 2px; }
+.workflow-node:focus-visible { outline: 2px solid var(--node-color); outline-offset: -3px; }
 .workflow-node.is-dragging { cursor: grabbing; }
 
 .node-meta { display: flex; justify-content: space-between; gap: 0.4rem; color: var(--node-color); }
@@ -737,6 +738,20 @@ onBeforeUnmount(() => {
   font: 500 clamp(0.9rem, 1.4vw, 1.08rem)/1.75 var(--font-sans, sans-serif);
 }
 
+@media (max-width: 1080px) {
+  .workflow-viewport {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    touch-action: pan-x pan-y;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .workflow-canvas { width: 70rem; }
+  .workflow-node { touch-action: pan-x pan-y; }
+}
+
 @media (max-width: 760px) {
   .zhipu-project { gap: 1.7rem; padding: 1rem; }
   .project-index { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -746,16 +761,8 @@ onBeforeUnmount(() => {
   .system-boundary { grid-template-columns: 1fr; }
   .system-boundary > div:first-child { border-right: 0; border-bottom: 1px solid rgba(37, 42, 49, 0.16); }
   .workflow-shell { height: 36rem; }
-  .workflow-viewport {
-    overflow-x: auto;
-    overflow-y: hidden;
-    overscroll-behavior-x: contain;
-    scrollbar-width: thin;
-    touch-action: pan-x pan-y;
-    -webkit-overflow-scrolling: touch;
-  }
   .workflow-canvas { width: 68rem; min-height: 36rem; }
-  .workflow-node { width: 8rem; touch-action: pan-x pan-y; }
+  .workflow-node { width: 8rem; }
   .workflow-node > strong { font-size: 0.8125rem; }
   .workflow-node > small { font-size: 0.75rem; }
   .workflow-toolbar button { width: 2.25rem; height: 2.25rem; }

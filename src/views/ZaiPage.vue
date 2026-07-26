@@ -240,8 +240,9 @@ onBeforeUnmount(() => {
 
 .project-inspector {
   min-width: 0;
-  max-height: min(760px, calc(100svh - 64px));
+  max-height: min(760px, calc(100svh - 96px));
   overflow: auto;
+  padding-top: 64px;
   padding-left: clamp(16px, 2vw, 28px);
   border-left: 1px solid rgba(25, 27, 27, 0.18);
   scrollbar-width: thin;
@@ -263,7 +264,7 @@ onBeforeUnmount(() => {
   border-bottom: 1px solid rgba(25, 27, 27, 0.18);
   padding: 0.75rem 0;
   background: transparent;
-  color: rgba(25, 27, 27, 0.52);
+  color: rgba(25, 27, 27, 0.68);
   text-align: left;
   cursor: pointer;
   transition:
@@ -279,7 +280,7 @@ onBeforeUnmount(() => {
 
 .project-nav button:focus-visible {
   outline: 2px solid #3f4644;
-  outline-offset: 3px;
+  outline-offset: -3px;
 }
 
 .project-nav button > span {
@@ -431,6 +432,7 @@ onBeforeUnmount(() => {
 
   .project-inspector {
     max-height: none;
+    padding-top: 0;
     padding-left: 0;
     border-left: 0;
   }

@@ -28,6 +28,7 @@ const label = ref('')
 
 let finePointerQuery = null
 let reducedMotionQuery = null
+let narrowViewportQuery = null
 let pointerListenersActive = false
 let animationFrame = 0
 let pendingActivation = false
@@ -38,7 +39,11 @@ let ringX = 0
 let ringY = 0
 
 function capabilityAllowed() {
-  return Boolean(finePointerQuery?.matches && !reducedMotionQuery?.matches)
+  return Boolean(
+    finePointerQuery?.matches
+    && !reducedMotionQuery?.matches
+    && !narrowViewportQuery?.matches
+  )
 }
 
 function cursorLabelFrom(target) {
@@ -180,14 +185,17 @@ function removeMediaListener(query) {
 onMounted(() => {
   finePointerQuery = window.matchMedia('(pointer: fine) and (hover: hover)')
   reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+  narrowViewportQuery = window.matchMedia('(max-width: 760px)')
   addMediaListener(finePointerQuery)
   addMediaListener(reducedMotionQuery)
+  addMediaListener(narrowViewportQuery)
   syncCapability()
 })
 
 onUnmounted(() => {
   removeMediaListener(finePointerQuery)
   removeMediaListener(reducedMotionQuery)
+  removeMediaListener(narrowViewportQuery)
   disablePointerListeners()
 })
 </script>
@@ -257,7 +265,7 @@ onUnmounted(() => {
   transform: translateY(-50%);
 }
 
-@media (pointer: coarse), (hover: none), (prefers-reduced-motion: reduce) {
+@media (max-width: 760px), (pointer: coarse), (hover: none), (prefers-reduced-motion: reduce) {
   .cursor-layer {
     display: none;
   }

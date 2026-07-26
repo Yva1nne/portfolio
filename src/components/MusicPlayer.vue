@@ -5,6 +5,7 @@
       'is-playing': isPlaying,
       'has-error': playbackState === 'error',
       'is-expanded': mobileExpanded,
+      'is-docked-top': dockAtTop,
     }"
     aria-label="背景音乐播放器"
   >
@@ -153,8 +154,10 @@ const muted = ref(false)
 const playbackState = ref('loading')
 const errorMessage = ref('')
 const mobileExpanded = ref(false)
-const isMobile = ref(false)
+const dockAtTop = ref(false)
 let mobileQuery = null
+let dockMutationObserver = null
+let dockFrame = 0
 
 const isPlaying = computed(() => (
   playbackState.value === 'playing' || playbackState.value === 'buffering'
@@ -242,7 +245,8 @@ async function togglePlayback() {
     errorMessage.value = error?.name === 'NotAllowedError'
       ? '浏览器未允许播放，请再次点击 PLAY'
       : '音频播放失败，请检查文件或浏览器格式支持'
-    if (isMobile.value) mobileExpanded.value = true
+    mobileExpanded.value = true
+    scheduleDockPosition()
   }
 }
 
@@ -324,16 +328,55 @@ function onAudioError() {
   }
   playbackState.value = 'error'
   errorMessage.value = messages[errorCode] || '音频加载失败'
-  if (isMobile.value) mobileExpanded.value = true
+  mobileExpanded.value = true
+  scheduleDockPosition()
 }
 
 function toggleMobileDetails() {
   mobileExpanded.value = !mobileExpanded.value
+  scheduleDockPosition()
 }
 
 function syncMobileLayout(event) {
-  isMobile.value = event.matches
   if (event.matches) mobileExpanded.value = false
+  scheduleDockPosition()
+}
+
+function syncDockPosition() {
+  dockFrame = 0
+  if (window.innerWidth <= 760) {
+    dockAtTop.value = false
+    return
+  }
+
+  const player = document.querySelector('.music-player')
+  const macbook = document.querySelector('.macbook-shell')
+  if (!player || !macbook) {
+    dockAtTop.value = false
+    return
+  }
+
+  const playerRect = player.getBoundingClientRect()
+  const macbookRect = macbook.getBoundingClientRect()
+  const projectedBottom = {
+    top: window.innerHeight - 14 - playerRect.height,
+    bottom: window.innerHeight - 14,
+    left: playerRect.left,
+    right: playerRect.right,
+  }
+  const overlapsBottomDock = (
+    macbookRect.right > projectedBottom.left
+    && macbookRect.left < projectedBottom.right
+    && macbookRect.bottom > projectedBottom.top
+    && macbookRect.top < projectedBottom.bottom
+  )
+
+  dockAtTop.value = overlapsBottomDock
+}
+
+function scheduleDockPosition() {
+  if (dockFrame) return
+  dockFrame = window.requestAnimationFrame(syncDockPosition)
 }
 
 function addMediaListener(query, listener) {
@@ -356,14 +399,22 @@ function formatTime(seconds) {
 
 onMounted(() => {
   mobileQuery = window.matchMedia('(max-width: 760px)')
-  isMobile.value = mobileQuery.matches
   addMediaListener(mobileQuery, syncMobileLayout)
+  window.addEventListener('scroll', scheduleDockPosition, { passive: true })
+  window.addEventListener('resize', scheduleDockPosition, { passive: true })
+  dockMutationObserver = new MutationObserver(scheduleDockPosition)
+  dockMutationObserver.observe(document.body, { childList: true, subtree: true })
   readPreferences()
   applyPreferences()
+  scheduleDockPosition()
 })
 
 onBeforeUnmount(() => {
   removeMediaListener(mobileQuery, syncMobileLayout)
+  window.removeEventListener('scroll', scheduleDockPosition)
+  window.removeEventListener('resize', scheduleDockPosition)
+  dockMutationObserver?.disconnect()
+  if (dockFrame) window.cancelAnimationFrame(dockFrame)
   audioRef.value?.pause()
 })
 </script>
@@ -375,15 +426,20 @@ onBeforeUnmount(() => {
   left: clamp(12px, 2.4vw, 36px);
   z-index: 80;
   display: grid;
-  width: min(360px, calc(100vw - 24px));
-  gap: 8px;
-  padding: 10px 12px 9px;
+  width: min(260px, calc(100vw - 24px));
+  gap: 0;
+  padding: 8px 10px;
   border-top: 1px solid var(--line-strong, rgba(24, 26, 28, 0.34));
   border-bottom: 1px solid var(--line, rgba(24, 26, 28, 0.16));
   background: rgba(228, 229, 228, 0.94);
   color: var(--ink, #181a1c);
   box-shadow: 0 12px 36px rgba(24, 26, 28, 0.1);
   backdrop-filter: blur(12px);
+}
+
+.music-player.is-expanded {
+  width: min(360px, calc(100vw - 24px));
+  gap: 8px;
 }
 
 .music-player audio {
@@ -393,8 +449,8 @@ onBeforeUnmount(() => {
 .player-primary {
   display: grid;
   min-width: 0;
-  grid-template-columns: 44px minmax(0, 1fr) auto;
-  gap: 10px;
+  grid-template-columns: 44px minmax(0, 1fr) 40px;
+  gap: 8px;
   align-items: center;
 }
 
@@ -461,15 +517,12 @@ onBeforeUnmount(() => {
 
 .player-end {
   display: grid;
-  min-width: 18px;
+  min-width: 40px;
   justify-items: end;
 }
 
 .level-meter {
-  display: flex;
-  height: 18px;
-  gap: 2px;
-  align-items: end;
+  display: none;
 }
 
 .level-meter i {
@@ -488,12 +541,31 @@ onBeforeUnmount(() => {
 .music-player.is-playing .level-meter i:nth-child(4) { animation-delay: -610ms; }
 
 .mobile-details-toggle {
-  display: none;
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line, rgba(24, 26, 28, 0.16));
+  background: transparent;
+  color: inherit;
+  font: 800 7px/1 var(--font-sans, 'Manrope', sans-serif);
+  letter-spacing: 0.08em;
+  cursor: pointer;
 }
 
 .player-details {
   display: grid;
   gap: 8px;
+}
+
+.music-player:not(.is-expanded) .player-details {
+  display: none;
+}
+
+.music-player:not(.is-expanded) .track-copy p,
+.music-player:not(.is-expanded) .track-copy span {
+  display: none;
 }
 
 .player-controls {
@@ -622,48 +694,6 @@ onBeforeUnmount(() => {
 
   .music-player.is-expanded {
     width: min(340px, calc(100vw - 24px));
-    gap: 8px;
-  }
-
-  .player-primary {
-    grid-template-columns: 44px minmax(0, 1fr) 40px;
-    gap: 8px;
-  }
-
-  .play-button {
-    width: 44px;
-    height: 44px;
-  }
-
-  .player-end {
-    min-width: 40px;
-  }
-
-  .level-meter {
-    display: none;
-  }
-
-  .mobile-details-toggle {
-    display: grid;
-    width: 40px;
-    height: 40px;
-    place-items: center;
-    padding: 0;
-    border: 1px solid var(--line, rgba(24, 26, 28, 0.16));
-    background: transparent;
-    color: inherit;
-    font: 800 7px/1 var(--font-sans, 'Manrope', sans-serif);
-    letter-spacing: 0.08em;
-    cursor: pointer;
-  }
-
-  .music-player:not(.is-expanded) .player-details {
-    display: none;
-  }
-
-  .music-player:not(.is-expanded) .track-copy p,
-  .music-player:not(.is-expanded) .track-copy span {
-    display: none;
   }
 
   .player-controls {
@@ -672,6 +702,13 @@ onBeforeUnmount(() => {
   }
 
   .track-copy strong { font-size: 11px; }
+}
+
+@media (min-width: 761px) {
+  .music-player.is-docked-top {
+    top: max(12px, env(safe-area-inset-top));
+    bottom: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

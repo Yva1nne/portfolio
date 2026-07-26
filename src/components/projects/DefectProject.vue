@@ -184,7 +184,7 @@ video {
   border: 0;
   border-right: 1px solid rgba(37, 41, 39, 0.14);
   background: transparent;
-  color: #777e79;
+  color: #5d6560;
   text-align: left;
   cursor: pointer;
   transition:
