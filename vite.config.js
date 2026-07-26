@@ -38,5 +38,10 @@ export default defineConfig({
   plugins: [vue(), copyPhaseOnePublicAssets()],
   build: {
     copyPublicDir: false,
+    rolldownOptions: {
+      checks: {
+        pluginTimings: false,
+      },
+    },
   },
 })
