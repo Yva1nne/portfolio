@@ -22,7 +22,7 @@
         <li v-for="evidence in item.evidence" :key="evidence">{{ evidence }}</li>
       </ul>
 
-      <a v-if="item.projectId" class="timeline-entry__link" href="#zai">
+      <a v-if="item.projectId" class="timeline-entry__link" href="#work">
         查看相关项目
         <span aria-hidden="true">↘</span>
       </a>
