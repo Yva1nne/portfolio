@@ -14,7 +14,6 @@
       >
         <Transition
           name="screen-mode"
-          mode="out-in"
           @enter="focusPendingTarget"
         >
           <div
@@ -58,7 +57,7 @@
 
           <div
             v-else
-            :key="activeProject.id"
+            key="project"
             class="project-window"
           >
             <header class="browser-chrome">
@@ -76,9 +75,19 @@
               <span aria-hidden="true"></span>
             </header>
 
-            <div class="project-scroll">
-              <slot />
-            </div>
+            <Transition
+              :name="projectSlideTransition"
+              @enter="focusPendingTarget"
+            >
+              <div
+                :key="activeProject.id"
+                class="project-scroll"
+                @wheel.stop
+                @touchmove.stop
+              >
+                <slot />
+              </div>
+            </Transition>
           </div>
         </Transition>
       </div>
@@ -97,7 +106,7 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 
 const props = defineProps({
   projects: {
@@ -117,10 +126,27 @@ const isOpen = ref(false)
 const menuDate = ref('')
 const menuTime = ref('')
 const folderOrigin = reactive({ x: '50%', y: '48%' })
+const projectSlideDirection = ref('forward')
+
+const projectSlideTransition = computed(() => (
+  projectSlideDirection.value === 'backward'
+    ? 'project-slide-backward'
+    : 'project-slide-forward'
+))
 
 let entryObserver = null
 let clockTimer = null
 let pendingFocusTarget = null
+
+watch(() => props.activeProject?.id, (nextId, previousId) => {
+  if (!nextId || !previousId || nextId === previousId) return
+
+  const projectOrder = props.projects.map((project) => project.id)
+  projectSlideDirection.value = projectOrder.indexOf(nextId) < projectOrder.indexOf(previousId)
+    ? 'backward'
+    : 'forward'
+  pendingFocusTarget = { type: 'close' }
+})
 
 function updateClock() {
   const now = new Date()
@@ -164,7 +190,9 @@ function focusPendingTarget(element) {
   if (!focusTarget) return
 
   if (focusTarget.type === 'close') {
-    element.querySelector('.window-close')?.focus({ preventScroll: true })
+    const closeButton = element.querySelector('.window-close')
+      || workspaceRoot.value?.querySelector('.window-close')
+    closeButton?.focus({ preventScroll: true })
     return
   }
 
@@ -376,48 +404,48 @@ onBeforeUnmount(() => {
 
 .browser-chrome {
   display: grid;
-  grid-template-columns: 76px minmax(0, 1fr) 76px;
+  grid-template-columns: 84px minmax(0, 1fr) 84px;
   align-items: center;
   border-bottom: 1px solid rgba(20, 23, 24, 0.14);
   background: rgba(255, 255, 255, 0.9);
 }
 
 .browser-chrome > strong {
+  justify-self: start;
   overflow: hidden;
+  max-width: 100%;
+  padding-left: 10px;
   color: #283037;
   font-size: clamp(10px, 1.05vw, 14px);
-  text-align: center;
+  text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .window-dots {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 24px);
   align-items: center;
-  gap: 6px;
-  padding-left: 14px;
+  gap: 0;
+  padding-left: 6px;
 }
 
-.window-dots span {
-  flex: 0 0 auto;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
+.window-dots span,
+.window-close {
+  position: relative;
+  width: 24px;
+  height: 36px;
 }
 
 .window-close {
-  position: relative;
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
   border: 0;
-  border-radius: 50%;
   padding: 0;
   background: transparent;
   cursor: pointer;
 }
 
-.window-close::before {
+.window-close::before,
+.window-dots span::before {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -434,44 +462,71 @@ onBeforeUnmount(() => {
   outline-offset: -3px;
 }
 
-.window-dots span:nth-child(2) {
+.window-dots span:nth-child(2)::before {
   background: #ffbd44;
 }
 
-.window-dots span:nth-child(3) {
+.window-dots span:nth-child(3)::before {
   background: #00ca4e;
 }
 
 .project-scroll {
+  grid-row: 2;
+  grid-column: 1;
   min-width: 0;
   min-height: 0;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   overscroll-behavior: contain;
   background: #f8f7f3;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
 }
 
-.screen-mode-enter-active {
-  transition:
-    clip-path 520ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    opacity 360ms ease,
-    transform 520ms cubic-bezier(0.2, 0.8, 0.2, 1);
+.mac-desktop.screen-mode-enter-active,
+.mac-desktop.screen-mode-leave-active {
+  transition: opacity 260ms ease;
 }
 
-.screen-mode-leave-active {
-  transition:
-    opacity 180ms ease,
-    transform 180ms ease;
-}
-
-.screen-mode-enter-from {
+.mac-desktop.screen-mode-enter-from,
+.mac-desktop.screen-mode-leave-to {
   opacity: 0;
+}
+
+.project-window.screen-mode-enter-active,
+.project-window.screen-mode-leave-active {
+  transition:
+    clip-path 620ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 420ms ease,
+    transform 620ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: clip-path, opacity, transform;
+}
+
+.project-window.screen-mode-enter-from,
+.project-window.screen-mode-leave-to {
+  opacity: 0.04;
   clip-path: circle(6% at var(--folder-origin-x) var(--folder-origin-y));
-  transform: scale(0.2);
+  transform: scale(0.16);
 }
 
-.screen-mode-leave-to {
+.project-slide-forward-enter-active,
+.project-slide-forward-leave-active,
+.project-slide-backward-enter-active,
+.project-slide-backward-leave-active {
+  transition: opacity 260ms ease, transform 320ms cubic-bezier(0.22, 0.72, 0.24, 1);
+  will-change: opacity, transform;
+}
+
+.project-slide-forward-enter-from,
+.project-slide-backward-leave-to {
   opacity: 0;
-  transform: scale(0.98);
+  transform: translateX(6%);
+}
+
+.project-slide-forward-leave-to,
+.project-slide-backward-enter-from {
+  opacity: 0;
+  transform: translateX(-6%);
 }
 
 @media (max-width: 760px) {
@@ -524,16 +579,21 @@ onBeforeUnmount(() => {
   }
 
   .browser-chrome {
-    grid-template-columns: 64px minmax(0, 1fr) 64px;
+    grid-template-columns: 68px minmax(0, 1fr) 68px;
   }
 
   .window-dots {
-    gap: 4px;
-    padding-left: 9px;
+    grid-template-columns: repeat(3, 20px);
+    padding-left: 4px;
   }
 
   .window-dots span,
-  .window-close::before {
+  .window-close {
+    width: 20px;
+  }
+
+  .window-close::before,
+  .window-dots span::before {
     width: 7px;
     height: 7px;
   }
@@ -542,20 +602,30 @@ onBeforeUnmount(() => {
 @media (prefers-reduced-motion: reduce) {
   .macbook-shell,
   .desktop-folder,
-  .screen-mode-enter-active,
-  .screen-mode-leave-active {
+  .mac-desktop.screen-mode-enter-active,
+  .mac-desktop.screen-mode-leave-active,
+  .project-window.screen-mode-enter-active,
+  .project-window.screen-mode-leave-active,
+  .project-slide-forward-enter-active,
+  .project-slide-forward-leave-active,
+  .project-slide-backward-enter-active,
+  .project-slide-backward-leave-active {
     transition: none;
   }
 
   .macbook-shell,
   .macbook-workspace.is-open .macbook-shell,
-  .screen-mode-enter-from,
-  .screen-mode-leave-to {
+  .project-window.screen-mode-enter-from,
+  .project-window.screen-mode-leave-to,
+  .project-slide-forward-enter-from,
+  .project-slide-forward-leave-to,
+  .project-slide-backward-enter-from,
+  .project-slide-backward-leave-to {
     transform: none;
   }
 
-  .screen-mode-enter-from,
-  .screen-mode-leave-to {
+  .project-window.screen-mode-enter-from,
+  .project-window.screen-mode-leave-to {
     opacity: 1;
     clip-path: none;
   }

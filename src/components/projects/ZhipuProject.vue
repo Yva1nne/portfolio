@@ -435,9 +435,13 @@ onBeforeUnmount(() => {
 
 .project-lead {
   display: grid;
-  max-width: 58rem;
-  gap: 0.75rem;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 0.55rem clamp(1.25rem, 3vw, 2.8rem);
+  align-items: end;
+  max-width: none;
 }
+
+.project-lead > p { grid-column: 1 / -1; }
 
 .project-lead p,
 .reading-section header > p,
@@ -458,8 +462,8 @@ onBeforeUnmount(() => {
 
 .project-lead h3 {
   max-width: 20ch;
-  font-size: clamp(1.7rem, 3.5vw, 3.2rem);
-  line-height: 1.06;
+  font-size: clamp(1.4rem, 2.25vw, 2.15rem);
+  line-height: 1.08;
 }
 
 .project-lead > span,
@@ -472,6 +476,11 @@ onBeforeUnmount(() => {
   color: #626a74;
   font-size: clamp(0.9375rem, 1.1vw, 1rem);
   line-height: 1.72;
+}
+
+.project-lead > span {
+  font-size: clamp(0.82rem, 1vw, 0.94rem);
+  line-height: 1.6;
 }
 
 .project-index {
@@ -759,6 +768,8 @@ onBeforeUnmount(() => {
 
 @media (max-width: 760px) {
   .zhipu-project { gap: 1.7rem; padding: 1rem; }
+  .project-lead { grid-template-columns: 1fr; }
+  .project-lead > p { grid-column: auto; }
   .project-index { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .project-index a:nth-child(2) { border-right: 0; }
   .project-index a:nth-child(-n + 2) { border-bottom: 1px solid rgba(37, 42, 49, 0.14); }

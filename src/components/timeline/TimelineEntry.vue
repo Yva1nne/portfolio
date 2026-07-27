@@ -51,12 +51,12 @@ defineProps({
 .timeline-entry {
   position: relative;
   display: grid;
-  min-height: 46svh;
+  min-height: 0;
   align-content: start;
-  grid-template-columns: minmax(118px, 0.32fr) minmax(0, 1fr);
-  gap: clamp(28px, 5vw, 78px);
+  grid-template-columns: minmax(82px, 0.28fr) minmax(0, 1fr);
+  gap: clamp(18px, 2.4vw, 32px);
   border-top: 1px solid var(--line-strong);
-  padding: clamp(46px, 8vh, 86px) 0;
+  padding: clamp(32px, 5vh, 52px) 0 clamp(42px, 7vh, 68px);
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 460ms ease, transform 460ms ease;
@@ -131,14 +131,14 @@ defineProps({
 }
 
 .timeline-entry h3 {
-  max-width: 18ch;
-  font-size: clamp(38px, 4.3vw, 62px);
-  line-height: 1.04;
+  max-width: 20ch;
+  font-size: clamp(25px, 2.55vw, 36px);
+  line-height: 1.08;
 }
 
 .timeline-entry__role {
-  margin: 18px 0 0;
-  font-size: 15px;
+  margin: 14px 0 0;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1.5;
@@ -146,17 +146,17 @@ defineProps({
 
 .timeline-entry__summary {
   max-width: 52ch;
-  margin: 22px 0 0;
+  margin: 17px 0 0;
   color: #383a3a;
-  font-size: clamp(15px, 1.35vw, 18px);
-  line-height: 1.75;
+  font-size: clamp(14px, 1.2vw, 16px);
+  line-height: 1.7;
 }
 
 .timeline-entry__evidence {
   display: grid;
   gap: 8px;
   max-width: 58ch;
-  margin: 24px 0 0;
+  margin: 18px 0 0;
   padding: 0;
   list-style: none;
 }
@@ -165,7 +165,7 @@ defineProps({
   position: relative;
   padding-left: 17px;
   color: var(--muted);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.65;
 }
 
@@ -193,7 +193,7 @@ defineProps({
 
 @media (max-width: 900px) {
   .timeline-entry {
-    grid-template-columns: minmax(100px, 0.28fr) minmax(0, 1fr);
+    grid-template-columns: minmax(100px, 0.24fr) minmax(0, 1fr);
     gap: 28px;
   }
 }
@@ -201,25 +201,7 @@ defineProps({
 @media (max-width: 760px) {
   .timeline-entry {
     display: block;
-    min-height: 46svh;
     padding: 44px 0 60px;
-  }
-
-  .timeline-entry::after {
-    position: absolute;
-    top: 44px;
-    left: -29px;
-    width: 9px;
-    height: 9px;
-    border: 1px solid var(--line-strong);
-    background: var(--bg);
-    content: '';
-    transform: translateX(-50%);
-  }
-
-  .timeline-entry.is-active::after {
-    border-color: var(--ink);
-    background: var(--ink);
   }
 
   .timeline-entry__header {
@@ -232,8 +214,8 @@ defineProps({
   }
 
   .timeline-entry h3 {
-    max-width: 15ch;
-    font-size: clamp(34px, 10.5vw, 48px);
+    max-width: 18ch;
+    font-size: clamp(30px, 9vw, 42px);
   }
 
   .timeline-entry__summary {

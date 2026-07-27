@@ -53,6 +53,19 @@
         </dl>
       </aside>
     </div>
+
+    <figure class="award-certificate">
+      <img
+        src="/project/%E8%8E%B7%E5%A5%96%E8%AF%81%E4%B9%A6.png"
+        alt="华为杯第七届中国研究生人工智能创新大赛一等奖获奖证书"
+        loading="lazy"
+      >
+      <figcaption>
+        <p>AWARD / 2025</p>
+        <h4>“华为杯”中国研究生人工智能创新大赛全国一等奖</h4>
+        <span>作品：晶圆制造端到端智能缺陷分析与根本原因追踪系统。</span>
+      </figcaption>
+    </figure>
   </div>
 </template>
 
@@ -111,48 +124,56 @@ onBeforeUnmount(() => {
 <style scoped>
 .defect-project {
   display: grid;
-  gap: clamp(1.5rem, 3vw, 2.8rem);
+  gap: clamp(1.2rem, 2vw, 2rem);
   padding: clamp(1.25rem, 3vw, 2.75rem);
   color: #252927;
 }
 
 .project-lead {
   display: grid;
-  max-width: 52rem;
-  gap: 0.7rem;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 0.55rem clamp(1.25rem, 3vw, 2.8rem);
+  align-items: end;
+  max-width: none;
 }
 
 .project-lead p,
-.result-note > p {
+.result-note > p,
+.award-certificate p {
   margin: 0;
   color: #687d74;
   font: 700 0.7rem/1.2 var(--font-sans, sans-serif);
   letter-spacing: 0.14em;
 }
 
+.project-lead > p {
+  grid-column: 1 / -1;
+}
+
 .project-lead h3,
-.result-note h4 {
+.result-note h4,
+.award-certificate h4 {
   margin: 0;
   font-family: var(--font-serif, serif);
   font-weight: 500;
 }
 
 .project-lead h3 {
-  max-width: 17ch;
-  font-size: clamp(1.65rem, 3.5vw, 3.2rem);
-  line-height: 1.05;
+  max-width: 20ch;
+  font-size: clamp(1.4rem, 2.25vw, 2.15rem);
+  line-height: 1.08;
 }
 
 .project-lead > span {
   color: #626864;
-  font-size: clamp(0.9375rem, 1.2vw, 1rem);
-  line-height: 1.75;
+  font-size: clamp(0.82rem, 1vw, 0.94rem);
+  line-height: 1.6;
 }
 
 .defect-demo {
   display: grid;
-  grid-template-columns: minmax(0, 1.7fr) minmax(14rem, 0.8fr);
-  gap: clamp(1.4rem, 3vw, 3rem);
+  grid-template-columns: minmax(0, 2.05fr) minmax(12rem, 0.72fr);
+  gap: clamp(1.2rem, 2.2vw, 2.2rem);
   align-items: start;
 }
 
@@ -244,6 +265,41 @@ video {
   line-height: 1.7;
 }
 
+.award-certificate {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.34fr) minmax(0, 1fr);
+  gap: clamp(1.2rem, 3vw, 2.6rem);
+  align-items: center;
+  margin: 0;
+  border-top: 1px solid rgba(37, 41, 39, 0.2);
+  padding: clamp(1.4rem, 3vw, 2.6rem) 0 0;
+}
+
+.award-certificate img {
+  display: block;
+  width: 100%;
+  max-width: 230px;
+  border: 1px solid rgba(56, 66, 61, 0.14);
+  box-shadow: 0 0.9rem 2rem rgba(37, 41, 39, 0.12);
+}
+
+.award-certificate figcaption {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.award-certificate h4 {
+  max-width: 18ch;
+  font-size: clamp(1.25rem, 2.2vw, 2rem);
+  line-height: 1.14;
+}
+
+.award-certificate figcaption > span {
+  color: #59605c;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+
 .result-note dl {
   display: grid;
   gap: 1rem;
@@ -272,6 +328,14 @@ video {
     padding: 1rem;
   }
 
+  .project-lead {
+    grid-template-columns: 1fr;
+  }
+
+  .project-lead > p {
+    grid-column: auto;
+  }
+
   .defect-demo {
     grid-template-columns: 1fr;
   }
@@ -298,6 +362,10 @@ video {
 
   .result-note h4 {
     max-width: none;
+  }
+
+  .award-certificate {
+    grid-template-columns: 1fr;
   }
 
   .project-lead > span,

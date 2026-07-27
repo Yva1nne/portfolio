@@ -91,7 +91,7 @@
         <span class="tag tag--pending">前期梳理完成 · 接入待实施</span>
       </header>
       <p class="intro">
-        下图是脱敏后的目标关系模型，用于解释平台、AG-UI 与 Hermes 的拟议接入方式；它不是已完成架构、内部系统截图、部署拓扑或线上监控台。
+        下图是脱敏后的目标关系模型，仅用于解释平台、AG-UI 与 Hermes 的拟议接入方式，不代表已完成架构、内部系统截图、部署拓扑或线上监控台。
       </p>
 
       <div class="content-grid">
@@ -272,10 +272,8 @@ const selectedOperationNodeData = computed(() => (
   --strong-line: rgba(32, 33, 31, 0.38);
   container: aliyun / inline-size;
   width: 100%;
-  height: 100%;
-  min-height: 0;
+  min-height: 100%;
   padding: clamp(18px, 2.6cqw, 32px);
-  overflow: auto;
   background: var(--paper);
   color: var(--ink);
   font-family: 'Manrope', 'Noto Sans SC', system-ui, sans-serif;

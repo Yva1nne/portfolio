@@ -47,12 +47,15 @@
           </button>
         </div>
 
-        <div class="ticket-instruction" :class="{ 'is-hidden': hideStubCallout }">
-          <span aria-hidden="true">↗</span>
-          <p>
-            <strong>拖动票根，进入作品集</strong>
-            <small>也可以按 Enter</small>
-          </p>
+        <div class="stub-callout" :class="{ 'is-hidden': hideStubCallout }" aria-hidden="true">
+          <img class="stub-callout-box" src="/cover/Rectangle 7.png" alt="" draggable="false" />
+          <img class="stub-callout-vector" src="/cover/Vector 1.png" alt="" draggable="false" />
+          <img
+            class="stub-callout-text"
+            src="/cover/stub-callout-text.png"
+            alt=""
+            draggable="false"
+          />
         </div>
       </div>
     </div>
@@ -120,7 +123,7 @@
           <section class="capability-page" aria-labelledby="capability-title">
             <div class="capability-heading">
               <p class="section-kicker">CAPABILITY STACK</p>
-              <h2 id="capability-title">判断、系统与验证</h2>
+              <h2 id="capability-title">判断、系统与落地</h2>
               <p>AI 是手段。每项能力都要落回具体任务、边界与证据。</p>
             </div>
 
@@ -234,6 +237,17 @@ function onStubKeydown(event) {
 
 function onStubClick(event) {
   if (event.detail !== 0) return
+  forceComplete()
+}
+
+function onCoverKeydown(event) {
+  if (event.key !== 'Enter' || event.defaultPrevented || event.repeat) return
+  if (!stubInteractive.value || isComplete.value) return
+
+  const target = event.target
+  if (target instanceof HTMLElement && target.closest('input, textarea, select, button, a[href], [contenteditable="true"]')) return
+
+  event.preventDefault()
   forceComplete()
 }
 
@@ -366,12 +380,14 @@ watch(isComplete, async (complete) => {
 
 onMounted(() => {
   window.scrollTo(0, 0)
+  window.addEventListener('keydown', onCoverKeydown)
   document.body.classList.add('is-transition-locked')
   attachTouchLock()
 })
 
 onUnmounted(() => {
   cleanupDrag()
+  window.removeEventListener('keydown', onCoverKeydown)
   detachTouchLock()
   reset()
   document.body.classList.remove('is-transition-locked')
@@ -439,6 +455,7 @@ onUnmounted(() => {
 }
 
 .ticket-scene {
+  --ticket-width: min(72vw, 940px);
   position: absolute;
   inset: 0;
   display: grid;
@@ -447,7 +464,7 @@ onUnmounted(() => {
 
 .ticket-complete {
   position: relative;
-  width: min(72vw, 940px);
+  width: var(--ticket-width);
   aspect-ratio: 907 / 360;
   transform: rotate(-4deg);
   filter: drop-shadow(0 24px 24px rgba(33, 31, 27, 0.16));
@@ -493,46 +510,43 @@ onUnmounted(() => {
   user-select: none;
 }
 
-.ticket-instruction {
+.stub-callout {
   position: absolute;
-  top: calc(50% + min(18vw, 216px));
-  right: max(7vw, calc((100vw - 1180px) / 2));
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  transition: opacity 180ms ease, transform 180ms ease;
-  color: rgba(24, 26, 28, 0.68);
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  transition: opacity 260ms ease, transform 260ms ease;
 }
 
-.ticket-instruction.is-hidden {
+.stub-callout.is-hidden {
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(-4px);
 }
 
-.ticket-instruction > span {
-  font-size: 22px;
-  transform: rotate(-18deg);
+.stub-callout img {
+  position: absolute;
+  display: block;
+  height: auto;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
-.ticket-instruction p {
-  display: grid;
-  gap: 4px;
-  margin: 0;
+.stub-callout-box {
+  top: calc(50% - min(18.4vw, 235px));
+  right: max(-4px, calc((100vw - var(--ticket-width)) / 2 - 36px));
+  width: min(20.4vw, 260px);
 }
 
-.ticket-instruction strong,
-.ticket-instruction small {
-  font-family: 'Noto Sans SC', sans-serif;
-  font-weight: 500;
+.stub-callout-vector {
+  top: calc(50% + min(12.5vw, 160px));
+  right: clamp(72px, 12vw, 154px);
+  width: min(11.8vw, 150px);
 }
 
-.ticket-instruction strong {
-  font-size: 14px;
-}
-
-.ticket-instruction small {
-  color: rgba(24, 26, 28, 0.48);
-  font-size: 12px;
+.stub-callout-text {
+  top: calc(50% + min(16.4vw, 210px));
+  right: clamp(10px, 2.4vw, 32px);
+  width: min(11.4vw, 145px);
 }
 
 .about-layer {
@@ -809,17 +823,26 @@ onUnmounted(() => {
     font-size: 9px;
   }
 
-  .ticket-complete {
-    width: 92vw;
+  .ticket-scene {
+    --ticket-width: 92vw;
   }
 
-  .ticket-instruction {
-    top: calc(50% + 88px);
-    right: 18px;
+  .stub-callout-box {
+    top: calc(50% - min(23vw, 147px));
+    right: -3px;
+    width: min(27.5vw, 176px);
   }
 
-  .ticket-instruction strong {
-    font-size: 12px;
+  .stub-callout-vector {
+    top: calc(50% + min(17vw, 110px));
+    right: min(9.5vw, 61px);
+    width: min(15vw, 96px);
+  }
+
+  .stub-callout-text {
+    top: calc(50% + min(23vw, 142px));
+    right: 10px;
+    width: min(17vw, 108px);
   }
 
   .about-stage {
@@ -901,7 +924,7 @@ onUnmounted(() => {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ticket-instruction,
+  .stub-callout,
   .profile-meta a,
   .about-layer {
     transition: none;

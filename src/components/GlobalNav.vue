@@ -200,7 +200,7 @@ function removeMediaListener(query, listener) {
 
 onMounted(() => {
   reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-  mobileQuery = window.matchMedia('(max-width: 760px)')
+  mobileQuery = window.matchMedia('(max-width: 1180px)')
   addMediaListener(mobileQuery, onMobilePreferenceChange)
 
   createSectionObserver()
@@ -296,7 +296,7 @@ onBeforeUnmount(() => {
   display: none;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 1180px) {
   .global-nav {
     top: 14px;
     right: 14px;

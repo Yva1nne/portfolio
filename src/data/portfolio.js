@@ -2,14 +2,13 @@ export const profile = {
   name: '叶奕含',
   direction: 'AI / DATABASE PRODUCT MANAGER',
   edition: 'Portfolio · 2026',
-  headline: '把复杂问题，拆成可以被验证的产品系统。',
+  headline: '从问题出发，做 AI 产品。',
   introduction: [
-    '我享受从复杂、抽象的问题里拆出清晰的用户任务、业务链路和产品方案。能写 Prompt、画原型，也会自己动手写代码验证想法——不是为了证明什么都会，而是不想让判断只停留在“我觉得”。',
-    '我相信好的 AI 产品不是为了把 AI 塞进流程，而是先定义问题、拆解场景，再决定哪些交给模型，哪些必须由确定性流程、数据和评估兜底。',
-    '现在，我在阿里云数据库团队做产品经理实习，继续把这套方法放进更复杂、更真实的产品与运维场景里。',
+    '我享受从复杂、抽象的问题里拆出清晰的用户任务、业务链路和产品方案。能写 Prompt、画原型，也会借助 AI Coding 做出可运行原型，让判断进入真实交互。',
+    '我习惯先定义问题、拆解场景，再决定哪些交给模型，哪些由确定性流程和数据约束。AI 能力最终需要对应清晰的用户任务与产品边界。',
   ],
   meta: [
-    { label: 'EDUCATION', value: '浙江大学 · 电子信息硕士（2027）' },
+    { label: 'EDUCATION', value: '浙江大学 · 电子信息硕士（预计 2027.06）' },
     { label: 'BASE', value: '杭州' },
     { label: 'EMAIL', value: 'yhye@zju.edu.cn', href: 'mailto:yhye@zju.edu.cn' },
     { label: 'GITHUB', value: 'github.com/yva1nne', href: 'https://github.com/yva1nne' },
@@ -22,7 +21,7 @@ export const capabilities = [
     number: '01',
     label: 'PRODUCT JUDGMENT',
     keywords: '问题定义、场景拆解、PRD、原型、需求优先级。',
-    evidence: '把“想做一个 AI 功能”转成明确用户、任务链路、边界与验收方式。',
+    evidence: '在数据库 AI 助手项目中梳理入口逻辑、版本能力与 Skill / Tool 配置，并参与测试和商业化推进。',
   },
   {
     id: 'agent',
@@ -36,20 +35,21 @@ export const capabilities = [
     number: '03',
     label: 'AI & ENGINEERING',
     keywords: 'Python、PyTorch、CV、API 集成、Docker。',
-    evidence: '能够读懂系统与模型约束，也能做出可运行原型验证产品判断。',
+    evidence: '能够读懂系统与模型约束，也能做出可运行原型推进方案讨论。',
   },
   {
     id: 'prototype',
     number: '04',
-    label: 'PROTOTYPE & FRONTEND',
-    keywords: 'Vue、JavaScript、Figma、Axure、Git、Vibe Coding。',
-    evidence: '把需求快速变成可体验、可讨论、可测试的界面，而不是停在文档。',
+    label: 'PROTOTYPE & AI CODING',
+    keywords: 'Figma、Axure、Prompt、AI Coding、交互原型。',
+    evidence: '用原型工具与 AI Coding 把需求快速做成可体验的界面，让方案进入真实交互。',
   },
 ]
 
 export const timelineItems = [
   {
     id: 'bachelor',
+    category: 'education',
     year: '2020',
     date: '2020.09 — 2024.06',
     title: '浙江大学 · 本科',
@@ -62,19 +62,20 @@ export const timelineItems = [
   },
   {
     id: 'master',
+    category: 'education',
     year: '2024',
-    date: '2024.09 — 至今',
+    date: '2024.09 — 2027.06（预计）',
     title: '浙江大学 · 硕士',
     role: '电子信息',
     summary: '研究与项目逐步从算法验证延伸到产品定义、系统集成与真实场景应用。',
     evidence: [
-      '电子信息（集成电路工程）方向，预计 2027 年毕业。',
       '研究与实践聚焦工业视觉模型训练、系统集成和 AI 产品设计。',
     ],
     current: true,
   },
   {
     id: 'defect',
+    category: 'project',
     year: '2024',
     date: '2024.09 — 2025.07',
     title: '智能缺陷分析系统',
@@ -88,6 +89,7 @@ export const timelineItems = [
   },
   {
     id: 'eda',
+    category: 'project',
     year: '2025',
     date: '2025.08 — 2025.12',
     title: '基于 AI 的跨工艺集成电路行为建模',
@@ -97,24 +99,26 @@ export const timelineItems = [
   },
   {
     id: 'ganttodo',
+    category: 'project',
     year: '2025',
     date: '2025.09 — 2025.12',
     title: 'Smart Ganttodo',
     role: 'AI 产品经理 / 独立开发',
     summary: '验证自然语言多意图解析、结构化 actions、甘特图状态与拖拽修正的个人任务规划链路。',
     evidence: [
-      '独立完成自然语言多意图解析、结构化 actions 与甘特图交互原型。',
-      '保留拖拽修正，让模型先生成可编辑初稿，而不是替用户直接执行。',
+      '设计 Prompt 约束、日历参照表与时区锁定，处理相对日期、星期与时区等时间理解问题。',
+      '将一句话中的创建、修改、删除等多意图解析为结构化 JSON actions，并映射到可拖拽甘特图。',
     ],
     projectId: 'ganttodo',
   },
   {
     id: 'zhipu',
+    category: 'project',
     year: '2025',
     date: '2025.12 — 2026.05',
     title: '智谱华章 · AI 产品经理实习',
     role: 'AI 产品经理实习生',
-    summary: '把复杂 ToB AI 项目中的分散材料、展示目标和自然语言交互需求，组织成可讲、可演、可追问的 LLM-driven workflow。',
+    summary: '在“城智大模型体系”一期交付末期，梳理 4 家单位的业务场景与项目材料，主导 5 个大屏、14 个页面的内容组织、讲解稿和演示脚本，并通过 ASR 纠错与意图路由，把智能中控、智能讲解和智能问答接入可控的 LLM-driven workflow。',
     evidence: [
       '主导 5 个大屏、14 个页面的展示方案、内容组织与演示脚本。',
       '设计智能中控、智能讲解、智能问答三类能力。',
@@ -123,6 +127,7 @@ export const timelineItems = [
   },
   {
     id: 'aliyun',
+    category: 'project',
     year: '2026',
     date: '2026.06 — 至今',
     title: '阿里云 · 数据库产品经理实习',
@@ -179,7 +184,7 @@ export const projects = {
       '覆盖 4 家单位的业务场景、痛点与项目边界。',
       '展示方案包含 5 个大屏、14 个页面。',
     ],
-    boundary: 'LLM 负责自然语言理解、路由匹配和受控生成；Workflow 负责确定性跳屏、讲解流程、问答子链路、兜底、日志和回归。它不是完全自治 Agent，也不是底层模型训练项目。',
+    boundary: 'LLM 负责自然语言理解、路由匹配和受控生成；Workflow 负责确定性跳屏、讲解流程、问答子链路、兜底、日志和回归。项目定位为展示型 LLM-driven workflow，不涉及完全自治 Agent 或底层模型训练。',
     accent: '#596a87',
   },
   defect: {
@@ -201,7 +206,7 @@ export const projects = {
       '检索模块单次时延 0.03s，Rank-1 准确率 96.2%。',
       '获“华为杯”中国研究生人工智能创新大赛全国一等奖。',
     ],
-    boundary: '系统不自动给出最终根因，而是把分类、位置、形貌和历史相似案例组织成辅助信息，交给 YE 工程师判断。',
+    boundary: '系统提供分类、位置、形貌和历史相似案例等辅助信息，最终根因仍由 YE 工程师判断。',
     videoSrc: '/新版一分钟展示.mp4',
     accent: '#687d74',
   },
@@ -233,6 +238,6 @@ export const projects = {
 export const projectList = projectOrder.map((projectId) => projects[projectId])
 
 export const projectOverview = {
-  title: '四段工作，四种把 AI 变成产品的方法。',
-  summary: '从数据库产品与运维 Agent，到 ToB 展示工作流、工业缺陷分析和个人效率工具，我更关心的不是“用了什么模型”，而是用户要完成什么任务、系统如何分工，以及结果怎样被验证。',
+  title: '项目作品',
+  summary: '四个项目覆盖数据库产品与运维 Agent、ToB 展示工作流、工业缺陷分析和个人效率工具，分别呈现任务定义、系统分工、交互设计与落地边界。',
 }

@@ -199,15 +199,17 @@ onBeforeUnmount(() => {
 <style scoped>
 .ganttodo-project {
   display: grid;
-  gap: clamp(1.5rem, 3vw, 2.8rem);
+  gap: clamp(1.2rem, 2vw, 2rem);
   padding: clamp(1.25rem, 3vw, 2.75rem);
   color: #2a272e;
 }
 
 .project-lead {
   display: grid;
-  max-width: 52rem;
-  gap: 0.7rem;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 0.55rem clamp(1.25rem, 3vw, 2.8rem);
+  align-items: end;
+  max-width: none;
 }
 
 .project-lead p,
@@ -228,15 +230,19 @@ onBeforeUnmount(() => {
 }
 
 .project-lead h3 {
-  max-width: 17ch;
-  font-size: clamp(1.65rem, 3.5vw, 3.2rem);
-  line-height: 1.05;
+  max-width: 20ch;
+  font-size: clamp(1.4rem, 2.25vw, 2.15rem);
+  line-height: 1.08;
 }
 
 .project-lead > span {
   color: #69646d;
-  font-size: clamp(0.9375rem, 1.2vw, 1rem);
-  line-height: 1.75;
+  font-size: clamp(0.82rem, 1vw, 0.94rem);
+  line-height: 1.6;
+}
+
+.project-lead > p {
+  grid-column: 1 / -1;
 }
 
 .demo-layout {
@@ -444,6 +450,14 @@ pre {
 @media (max-width: 760px) {
   .ganttodo-project {
     padding: 1rem;
+  }
+
+  .project-lead {
+    grid-template-columns: 1fr;
+  }
+
+  .project-lead > p {
+    grid-column: auto;
   }
 
   .demo-layout {

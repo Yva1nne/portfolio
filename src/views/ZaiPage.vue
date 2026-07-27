@@ -218,8 +218,8 @@ onBeforeUnmount(() => {
 
 .work-intro h2 {
   max-width: 14ch;
-  font-size: clamp(3rem, 7vw, 7rem);
-  line-height: 0.98;
+  font-size: clamp(2.5rem, 4.2vw, 4.8rem);
+  line-height: 1;
 }
 
 .work-intro > span {
@@ -488,7 +488,7 @@ onBeforeUnmount(() => {
 
   .work-intro h2 {
     max-width: 10ch;
-    font-size: clamp(3rem, 14vw, 4.2rem);
+    font-size: clamp(2.6rem, 12vw, 3.6rem);
   }
 
   .project-nav {

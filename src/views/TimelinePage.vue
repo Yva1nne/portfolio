@@ -1,40 +1,49 @@
 <template>
   <section
     id="timeline"
-    ref="timelineSection"
     class="timeline-page"
     aria-labelledby="timeline-title"
   >
     <header class="timeline-intro">
       <p>EXPERIENCE / 2020 — NOW</p>
-      <h2 id="timeline-title">从工程验证，走到产品判断。</h2>
+      <h2 id="timeline-title">从工程实践，走到产品判断。</h2>
       <p class="timeline-intro__copy">
-        七段经历不是工具清单，而是我不断把问题、系统边界与验证方式说得更清楚的过程。
+        七段经历记录了我从工程实践、AI 项目到产品工作的路径，也呈现了问题拆解与系统边界逐步清晰的过程。
       </p>
     </header>
 
     <div class="timeline-layout">
-      <TimelineRail
-        :years="timelineYears"
-        :active-year="activeItem.year"
-        :progress="scrollProgress"
-      />
+      <section
+        v-for="lane in timelineLanes"
+        :key="lane.id"
+        class="timeline-lane"
+        :class="`timeline-lane--${lane.id}`"
+        :aria-labelledby="`timeline-lane-${lane.id}`"
+      >
+        <header class="timeline-lane__header">
+          <span>{{ lane.number }}</span>
+          <div>
+            <p>{{ lane.kicker }}</p>
+            <h3 :id="`timeline-lane-${lane.id}`">{{ lane.title }}</h3>
+          </div>
+        </header>
 
-      <div class="timeline-entries">
-        <div
-          v-for="item in timelineItems"
-          :key="item.id"
-          :ref="(element) => setEntryElement(element, item.id)"
-          class="timeline-entry-shell"
-          :data-timeline-id="item.id"
-        >
-          <TimelineEntry
-            :item="item"
-            :active="item.id === activeId"
-            :revealed="revealedIds.has(item.id)"
-          />
+        <div class="timeline-entries">
+          <div
+            v-for="item in lane.items"
+            :key="item.id"
+            :ref="(element) => setEntryElement(element, item.id)"
+            class="timeline-entry-shell"
+            :data-timeline-id="item.id"
+          >
+            <TimelineEntry
+              :item="item"
+              :active="item.id === activeId"
+              :revealed="revealedIds.has(item.id)"
+            />
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   </section>
 </template>
@@ -42,36 +51,32 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import TimelineEntry from '../components/timeline/TimelineEntry.vue'
-import TimelineRail from '../components/timeline/TimelineRail.vue'
 import { timelineItems } from '../data/portfolio.js'
 
-const timelineSection = ref(null)
 const activeId = ref(timelineItems[0].id)
 const revealedIds = ref(new Set())
-const scrollProgress = ref(0)
 const entryElements = new Map()
 const visibleEntries = new Map()
 
 let entryObserver = null
-let scrollFrame = null
 let motionQuery = null
 
-const activeItem = computed(() => (
-  timelineItems.find((item) => item.id === activeId.value) || timelineItems[0]
-))
-
-const timelineYears = computed(() => {
-  const firstIndexByYear = new Map()
-
-  timelineItems.forEach((item, index) => {
-    if (!firstIndexByYear.has(item.year)) firstIndexByYear.set(item.year, index)
-  })
-
-  return Array.from(firstIndexByYear, ([label, index]) => ({
-    label,
-    position: timelineItems.length > 1 ? (index / (timelineItems.length - 1)) * 100 : 0,
-  }))
-})
+const timelineLanes = computed(() => [
+  {
+    id: 'education',
+    number: '01',
+    kicker: 'EDUCATION',
+    title: '教育经历',
+    items: timelineItems.filter((item) => item.category === 'education'),
+  },
+  {
+    id: 'project',
+    number: '02',
+    kicker: 'PROJECT / COMPETITION / INTERNSHIP',
+    title: '项目、比赛与实习',
+    items: timelineItems.filter((item) => item.category === 'project'),
+  },
+])
 
 function setEntryElement(element, id) {
   if (element) {
@@ -139,21 +144,6 @@ function observeEntries() {
   entryElements.forEach((element) => entryObserver.observe(element))
 }
 
-function updateScrollProgress() {
-  scrollFrame = null
-  const section = timelineSection.value
-  if (!section) return
-
-  const rect = section.getBoundingClientRect()
-  const scrollRange = Math.max(section.offsetHeight - window.innerHeight, 1)
-  scrollProgress.value = Math.min(Math.max(-rect.top / scrollRange, 0), 1)
-}
-
-function requestScrollUpdate() {
-  if (scrollFrame !== null) return
-  scrollFrame = window.requestAnimationFrame(updateScrollProgress)
-}
-
 function onMotionPreferenceChange(event) {
   if (event.matches) revealAll()
 }
@@ -164,19 +154,12 @@ onMounted(() => {
   motionQuery.addEventListener?.('change', onMotionPreferenceChange)
 
   observeEntries()
-  updateScrollProgress()
-  window.addEventListener('scroll', requestScrollUpdate, { passive: true })
-  window.addEventListener('resize', requestScrollUpdate)
 })
 
 onBeforeUnmount(() => {
   entryObserver?.disconnect()
   visibleEntries.clear()
-  window.removeEventListener('scroll', requestScrollUpdate)
-  window.removeEventListener('resize', requestScrollUpdate)
   motionQuery?.removeEventListener?.('change', onMotionPreferenceChange)
-
-  if (scrollFrame !== null) window.cancelAnimationFrame(scrollFrame)
 })
 </script>
 
@@ -212,8 +195,8 @@ onBeforeUnmount(() => {
 }
 
 .timeline-intro h2 {
-  max-width: 12ch;
-  font-size: clamp(54px, 8vw, 112px);
+  max-width: 14ch;
+  font-size: clamp(48px, 5.65vw, 72px);
   line-height: 0.96;
 }
 
@@ -228,10 +211,42 @@ onBeforeUnmount(() => {
 .timeline-layout {
   display: grid;
   max-width: 1180px;
-  grid-template-columns: minmax(210px, 0.56fr) minmax(0, 1.44fr);
-  gap: clamp(52px, 9vw, 150px);
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+  gap: clamp(34px, 5vw, 74px);
   margin: 0 auto;
   padding-top: clamp(72px, 12vh, 132px);
+}
+
+.timeline-lane {
+  min-width: 0;
+}
+
+.timeline-lane__header {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+  min-height: 88px;
+  border-top: 2px solid var(--ink);
+  padding: 16px 0 22px;
+}
+
+.timeline-lane__header > span,
+.timeline-lane__header p {
+  color: var(--muted);
+  font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.timeline-lane__header p {
+  margin: 0 0 6px;
+}
+
+.timeline-lane__header h3 {
+  font-size: clamp(24px, 2.45vw, 34px);
+  line-height: 1.1;
 }
 
 .timeline-entries,
@@ -241,8 +256,8 @@ onBeforeUnmount(() => {
 
 @media (max-width: 900px) {
   .timeline-layout {
-    grid-template-columns: minmax(170px, 0.42fr) minmax(0, 1fr);
-    gap: 48px;
+    grid-template-columns: 1fr;
+    gap: 72px;
   }
 }
 
@@ -270,8 +285,8 @@ onBeforeUnmount(() => {
   }
 
   .timeline-layout {
-    grid-template-columns: 16px minmax(0, 1fr);
-    gap: 20px;
+    grid-template-columns: 1fr;
+    gap: 60px;
     padding-top: 64px;
   }
 }
