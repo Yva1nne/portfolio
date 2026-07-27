@@ -44,11 +44,11 @@
         <dl>
           <div>
             <dt>我的职责</dt>
-            <dd>{{ project.responsibilities.join('；') }}</dd>
+            <dd>{{ project.responsibilities.join(' ') }}</dd>
           </div>
           <div>
             <dt>验证证据</dt>
-            <dd>{{ project.evidence.join('；') }}</dd>
+            <dd>{{ project.evidence.join(' ') }}</dd>
           </div>
         </dl>
       </aside>
@@ -124,7 +124,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .defect-project {
   display: grid;
-  gap: clamp(1.2rem, 2vw, 2rem);
+  gap: clamp(1rem, 1.8vw, 1.6rem);
   padding: clamp(1.25rem, 3vw, 2.75rem);
   color: #252927;
 }
@@ -159,7 +159,7 @@ onBeforeUnmount(() => {
 }
 
 .project-lead h3 {
-  max-width: 20ch;
+  max-width: 18ch;
   font-size: clamp(1.4rem, 2.25vw, 2.15rem);
   line-height: 1.08;
 }
@@ -172,8 +172,8 @@ onBeforeUnmount(() => {
 
 .defect-demo {
   display: grid;
-  grid-template-columns: minmax(0, 2.05fr) minmax(12rem, 0.72fr);
-  gap: clamp(1.2rem, 2.2vw, 2.2rem);
+  grid-template-columns: 1fr;
+  gap: clamp(1rem, 2vw, 1.5rem);
   align-items: start;
 }
 
@@ -247,13 +247,17 @@ video {
 
 .result-note {
   display: grid;
-  gap: 0.9rem;
-  padding-top: 0.25rem;
+  grid-template-columns: minmax(10rem, 0.68fr) minmax(0, 1.32fr);
+  gap: 0.45rem clamp(1.2rem, 3vw, 3rem);
+  align-items: start;
+  padding-top: 0.9rem;
   border-top: 2px solid #687d74;
 }
 
+.result-note > p { grid-column: 1 / -1; }
+
 .result-note h4 {
-  max-width: 13ch;
+  max-width: 16ch;
   font-size: clamp(1.25rem, 2.1vw, 1.8rem);
   line-height: 1.15;
 }
@@ -302,8 +306,10 @@ video {
 
 .result-note dl {
   display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
-  margin: 0.5rem 0 0;
+  margin: 0.25rem 0 0;
 }
 
 .result-note dl > div {
@@ -338,6 +344,16 @@ video {
 
   .defect-demo {
     grid-template-columns: 1fr;
+  }
+
+  .result-note,
+  .result-note dl {
+    grid-template-columns: 1fr;
+  }
+
+  .result-note > p,
+  .result-note dl {
+    grid-column: auto;
   }
 
   .output-index {

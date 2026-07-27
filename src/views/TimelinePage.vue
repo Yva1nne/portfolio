@@ -12,25 +12,45 @@
       </p>
     </header>
 
-    <div class="timeline-layout">
-      <section
-        v-for="lane in timelineLanes"
-        :key="lane.id"
-        class="timeline-lane"
-        :class="`timeline-lane--${lane.id}`"
-        :aria-labelledby="`timeline-lane-${lane.id}`"
-      >
-        <header class="timeline-lane__header">
+    <div class="timeline-layout" aria-label="按年份排列的教育与项目双栏时间轴">
+      <header class="timeline-columns">
+        <p class="timeline-axis-label">YEAR</p>
+        <div
+          v-for="lane in timelineLanes"
+          :key="lane.id"
+          class="timeline-lane__header"
+        >
           <span>{{ lane.number }}</span>
           <div>
             <p>{{ lane.kicker }}</p>
             <h3 :id="`timeline-lane-${lane.id}`">{{ lane.title }}</h3>
           </div>
+        </div>
+      </header>
+
+      <section
+        v-for="group in timelineGroups"
+        :key="group.year"
+        class="timeline-year-row"
+        :aria-labelledby="`timeline-year-${group.year}`"
+      >
+        <header class="timeline-year-marker">
+          <time :id="`timeline-year-${group.year}`">{{ group.year }}</time>
+          <span aria-hidden="true"></span>
         </header>
 
-        <div class="timeline-entries">
+        <div
+          v-for="lane in timelineLanes"
+          :key="lane.id"
+          class="timeline-year-lane"
+          :class="`timeline-year-lane--${lane.id}`"
+          :aria-labelledby="`timeline-lane-${lane.id}`"
+        >
+          <p v-if="group[lane.id].length" class="timeline-year-lane__label">
+            {{ lane.title }}
+          </p>
           <div
-            v-for="item in lane.items"
+            v-for="item in group[lane.id]"
             :key="item.id"
             :ref="(element) => setEntryElement(element, item.id)"
             class="timeline-entry-shell"
@@ -67,16 +87,22 @@ const timelineLanes = computed(() => [
     number: '01',
     kicker: 'EDUCATION',
     title: '教育经历',
-    items: timelineItems.filter((item) => item.category === 'education'),
   },
   {
     id: 'project',
     number: '02',
     kicker: 'PROJECT / COMPETITION / INTERNSHIP',
     title: '项目、比赛与实习',
-    items: timelineItems.filter((item) => item.category === 'project'),
   },
 ])
+
+const timelineGroups = computed(() => (
+  [...new Set(timelineItems.map((item) => item.year))].map((year) => ({
+    year,
+    education: timelineItems.filter((item) => item.year === year && item.category === 'education'),
+    project: timelineItems.filter((item) => item.year === year && item.category === 'project'),
+  }))
+))
 
 function setEntryElement(element, id) {
   if (element) {
@@ -177,12 +203,11 @@ onBeforeUnmount(() => {
 
 .timeline-intro {
   display: grid;
-  min-height: 68svh;
   max-width: 1180px;
-  align-content: center;
+  align-content: start;
   margin: 0 auto;
   border-bottom: 1px solid var(--line-strong);
-  padding: clamp(80px, 14vh, 150px) 0;
+  padding: clamp(64px, 9vh, 96px) 0 clamp(52px, 7vh, 76px);
 }
 
 .timeline-intro > p:first-child {
@@ -195,40 +220,61 @@ onBeforeUnmount(() => {
 }
 
 .timeline-intro h2 {
-  max-width: 14ch;
-  font-size: clamp(48px, 5.65vw, 72px);
-  line-height: 0.96;
+  max-width: none;
+  font-size: clamp(46px, 5.65vw, 64px);
+  line-height: 1.02;
+  text-wrap: balance;
 }
 
 .timeline-intro__copy {
-  max-width: 46ch;
-  margin: 38px 0 0;
+  max-width: 60ch;
+  margin: 24px 0 0;
   color: var(--muted);
   font-size: clamp(15px, 1.25vw, 18px);
   line-height: 1.75;
 }
 
 .timeline-layout {
-  display: grid;
   max-width: 1180px;
-  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
-  gap: clamp(34px, 5vw, 74px);
   margin: 0 auto;
-  padding-top: clamp(72px, 12vh, 132px);
+  padding-top: clamp(52px, 8vh, 88px);
 }
 
-.timeline-lane {
+.timeline-columns,
+.timeline-year-row {
+  display: grid;
+  grid-template-columns: clamp(58px, 7vw, 76px) repeat(2, minmax(0, 1fr));
+}
+
+.timeline-columns {
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.timeline-axis-label,
+.timeline-lane__header {
   min-width: 0;
+  min-height: 96px;
+  margin: 0;
+  padding: 18px clamp(14px, 2.4vw, 28px) 22px;
+}
+
+.timeline-axis-label {
+  border-right: 1px solid var(--line-strong);
+  color: var(--muted);
+  font: 800 9px/1.2 'Manrope', 'Noto Sans SC', sans-serif;
+  letter-spacing: 0.14em;
 }
 
 .timeline-lane__header {
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 10px;
   align-items: start;
-  min-height: 88px;
-  border-top: 2px solid var(--ink);
-  padding: 16px 0 22px;
+}
+
+.timeline-lane__header + .timeline-lane__header {
+  border-left: 1px solid var(--line-strong);
 }
 
 .timeline-lane__header > span,
@@ -245,20 +291,57 @@ onBeforeUnmount(() => {
 }
 
 .timeline-lane__header h3 {
-  font-size: clamp(24px, 2.45vw, 34px);
+  font-size: clamp(22px, 2.2vw, 30px);
   line-height: 1.1;
 }
 
-.timeline-entries,
-.timeline-entry-shell {
+.timeline-year-row {
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.timeline-year-marker {
+  position: relative;
+  min-height: 100%;
+  border-right: 1px solid var(--line-strong);
+  padding: 28px 12px 28px 0;
+}
+
+.timeline-year-marker time {
+  display: block;
+  color: var(--muted);
+  font: 800 11px/1.2 'Manrope', 'Noto Sans SC', sans-serif;
+  letter-spacing: 0.08em;
+}
+
+.timeline-year-marker span {
+  position: absolute;
+  top: 31px;
+  right: -5px;
+  width: 9px;
+  height: 9px;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  background: var(--bg);
+}
+
+.timeline-year-lane {
   min-width: 0;
 }
 
-@media (max-width: 900px) {
-  .timeline-layout {
-    grid-template-columns: 1fr;
-    gap: 72px;
-  }
+.timeline-year-lane--project {
+  border-left: 1px solid var(--line-strong);
+}
+
+.timeline-year-lane__label {
+  display: none;
+}
+
+.timeline-entry-shell + .timeline-entry-shell {
+  border-top: 1px solid var(--line-strong);
+}
+
+.timeline-entry-shell {
+  min-width: 0;
 }
 
 @media (max-width: 760px) {
@@ -270,8 +353,7 @@ onBeforeUnmount(() => {
   }
 
   .timeline-intro {
-    min-height: 78svh;
-    padding: 82px 0 70px;
+    padding: 72px 0 58px;
   }
 
   .timeline-intro h2 {
@@ -285,9 +367,52 @@ onBeforeUnmount(() => {
   }
 
   .timeline-layout {
-    grid-template-columns: 1fr;
-    gap: 60px;
-    padding-top: 64px;
+    padding-top: 52px;
+  }
+
+  .timeline-columns {
+    display: none;
+  }
+
+  .timeline-year-row {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .timeline-year-marker {
+    grid-row: 1 / span 2;
+    padding-top: 24px;
+  }
+
+  .timeline-year-marker time {
+    font-size: 9px;
+    writing-mode: vertical-rl;
+  }
+
+  .timeline-year-marker span {
+    top: 27px;
+  }
+
+  .timeline-year-lane {
+    grid-column: 2;
+  }
+
+  .timeline-year-lane--project {
+    border-top: 1px solid var(--line-strong);
+    border-left: 0;
+  }
+
+  .timeline-year-lane:empty,
+  .timeline-year-lane--project:empty {
+    display: none;
+  }
+
+  .timeline-year-lane__label {
+    display: block;
+    margin: 0;
+    padding: 14px 18px 0;
+    color: var(--muted);
+    font: 800 9px/1.2 'Manrope', 'Noto Sans SC', sans-serif;
+    letter-spacing: 0.12em;
   }
 }
 </style>

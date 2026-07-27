@@ -2,7 +2,10 @@
   <div
     ref="workspaceRoot"
     class="macbook-workspace"
-    :class="{ 'is-open': isOpen }"
+    :class="{
+      'is-open': isOpen,
+      'is-project-open': Boolean(activeProject),
+    }"
   >
     <div class="macbook-shell">
       <div
@@ -11,6 +14,7 @@
           '--folder-origin-x': folderOrigin.x,
           '--folder-origin-y': folderOrigin.y,
         }"
+        @wheel="onScreenWheel"
       >
         <Transition
           name="screen-mode"
@@ -82,7 +86,6 @@
               <div
                 :key="activeProject.id"
                 class="project-scroll"
-                @wheel.stop
                 @touchmove.stop
               >
                 <slot />
@@ -160,6 +163,23 @@ function updateClock() {
     minute: '2-digit',
     hour12: false,
   }).format(now)
+}
+
+function onScreenWheel(event) {
+  if (!props.activeProject || event.ctrlKey) return
+
+  const scrollContainer = event.currentTarget.querySelector('.project-scroll')
+  if (!scrollContainer) return
+
+  const unit = event.deltaMode === 1
+    ? 16
+    : event.deltaMode === 2
+      ? scrollContainer.clientHeight
+      : 1
+
+  event.preventDefault()
+  event.stopPropagation()
+  scrollContainer.scrollTop += event.deltaY * unit
 }
 
 function openProject(projectId, event) {
@@ -244,7 +264,10 @@ onBeforeUnmount(() => {
   transform: translateY(42px) rotateX(-45deg) scale(0.96);
   transform-origin: 50% 91%;
   transform-style: preserve-3d;
-  transition: transform 680ms cubic-bezier(0.18, 0.76, 0.24, 1);
+  transition:
+    aspect-ratio 620ms cubic-bezier(0.22, 0.72, 0.24, 1),
+    transform 680ms cubic-bezier(0.18, 0.76, 0.24, 1),
+    width 620ms cubic-bezier(0.22, 0.72, 0.24, 1);
 }
 
 .macbook-workspace.is-open .macbook-shell {
@@ -261,6 +284,13 @@ onBeforeUnmount(() => {
   overflow: hidden;
   border-radius: 8px 8px 0 0;
   background: #d7e3e9;
+  transition:
+    top 620ms cubic-bezier(0.22, 0.72, 0.24, 1),
+    left 620ms cubic-bezier(0.22, 0.72, 0.24, 1),
+    width 620ms cubic-bezier(0.22, 0.72, 0.24, 1),
+    height 620ms cubic-bezier(0.22, 0.72, 0.24, 1),
+    border-radius 420ms ease,
+    box-shadow 420ms ease;
 }
 
 .macbook-frame {
@@ -272,8 +302,32 @@ onBeforeUnmount(() => {
   height: 100%;
   object-fit: contain;
   pointer-events: none;
+  transition:
+    opacity 360ms ease,
+    transform 620ms cubic-bezier(0.22, 0.72, 0.24, 1);
   user-select: none;
   -webkit-user-drag: none;
+}
+
+@media (min-width: 761px) {
+  .macbook-workspace.is-project-open .macbook-shell {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+  }
+
+  .macbook-workspace.is-project-open .macbook-screen {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    box-shadow: 0 28px 70px rgba(24, 27, 28, 0.16);
+  }
+
+  .macbook-workspace.is-project-open .macbook-frame {
+    opacity: 0;
+    transform: scale(1.045);
+  }
 }
 
 .mac-desktop,
@@ -424,16 +478,16 @@ onBeforeUnmount(() => {
 
 .window-dots {
   display: grid;
-  grid-template-columns: repeat(3, 24px);
+  grid-template-columns: repeat(3, 18px);
   align-items: center;
   gap: 0;
-  padding-left: 6px;
+  padding-left: 10px;
 }
 
 .window-dots span,
 .window-close {
   position: relative;
-  width: 24px;
+  width: 18px;
   height: 36px;
 }
 
@@ -449,8 +503,8 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 9px;
-  height: 9px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #ff625c;
   content: '';
@@ -583,13 +637,13 @@ onBeforeUnmount(() => {
   }
 
   .window-dots {
-    grid-template-columns: repeat(3, 20px);
-    padding-left: 4px;
+    grid-template-columns: repeat(3, 16px);
+    padding-left: 8px;
   }
 
   .window-dots span,
   .window-close {
-    width: 20px;
+    width: 16px;
   }
 
   .window-close::before,
@@ -601,6 +655,8 @@ onBeforeUnmount(() => {
 
 @media (prefers-reduced-motion: reduce) {
   .macbook-shell,
+  .macbook-screen,
+  .macbook-frame,
   .desktop-folder,
   .mac-desktop.screen-mode-enter-active,
   .mac-desktop.screen-mode-leave-active,

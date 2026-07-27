@@ -1,68 +1,62 @@
 # Design QA
 
-## Comparison target
+## 本轮范围
 
-- Source visual truth: `/tmp/portfolio-source-ticket-639x582.png`, rendered from Git commit `34fe022` at the original ticket-cover state.
-- Implementation screenshot: `/tmp/portfolio-current-ticket-final-639x582.jpg`, rendered from `http://127.0.0.1:4173/`.
-- Combined comparison input: `/tmp/ticket-comparison-final.jpg` (source left, implementation right).
-- Viewport: `639 × 582` CSS px.
-- Pixels and density: source `639 × 582`, implementation `639 × 582`; both saved at the same pixel dimensions with no density resampling.
-- State: cover idle, ticket stub attached, callout visible, no hover or drag.
+- 视口：`1062 × 582` CSS px，覆盖用户批注出现的实际窗口比例。
+- 目标：修复 Timeline 留白与双栏坐标；恢复 Mac 文件夹转场；把项目窗口扩展成阅读主舞台；让四个项目分别以工作流、视频、真实网页和产品地图为首要证据。
+- 研究结论与来源：[`docs/project-showcase-research.md`](docs/project-showcase-research.md)。
 
-## Full-view comparison evidence
+## 同屏对照
 
-- The current cover intentionally retains the redesigned, larger ticket and identity header. The scoped restoration target is the original callout treatment.
-- The original dotted enclosure, curved hand-drawn arrow, and handwritten instruction are restored with the original raster assets and preserve their relationship to the ticket stub.
-- The callout remains inside the `639 × 582` viewport: dotted box `x 466.28 / y 144.02 / 175.72 × 258.55` CSS px; the arrow and handwritten text sit below the stub without covering the main ticket copy.
+- Timeline 批注前：`/tmp/portfolio-timeline-1062x582.jpg`
+- Timeline 修订后：`/tmp/portfolio-timeline-intro-revised-1062x582.jpg`
+- Timeline 合并对照：`/tmp/timeline-before-after.jpg`
+- 缺陷项目合并对照：`/tmp/defect-before-after.jpg`
+- Ganttodo 合并对照：`/tmp/ganttodo-before-after.jpg`
+- 智谱项目合并对照：`/tmp/zhipu-before-after.jpg`
 
-## Focused region comparison evidence
+所有合并图都保持左右两侧同为 `1062 × 582`，没有重采样其中一侧。左侧是批注状态，右侧是当前实现。
 
-- Focused region: ticket stub and instruction callout.
-- Source assets: `public/cover/Rectangle 7.png`, `public/cover/Vector 1.png`, and the sanitized copy `public/cover/stub-callout-text.png`.
-- No CSS drawing, text glyph, inline SVG, or approximate replacement is used for the restored artwork.
-- Fonts and typography: the callout typography is the original raster artwork; the surrounding cover typography remains unchanged.
-- Spacing and layout: the dotted enclosure follows the larger current stub, while the arrow and lettering keep the original visual sequence.
-- Colors and tokens: original gray callout artwork and existing neutral cover palette are preserved.
-- Image quality: original transparent PNG assets are used at intrinsic aspect ratios with no stretching.
-- Copy: the restored handwritten copy matches the original asset; the button retains an accessible Enter instruction through its `aria-label`.
+## 验收结果
 
-## Additional annotated-screen verification
+### Timeline
 
-- `1062 × 582`: timeline title computed at `60.003px`; education and project lanes render side by side at `361.40px` and `520.07px` with no overlap.
-- `1062 × 582`: desktop navigation collapses to the MENU control, preventing the annotated heading collision.
-- MacBook window: Finder-style open and close transitions interpolate `clip-path`, opacity, and scale from the selected folder origin. Project-to-project transitions use directional slide classes.
-- MacBook window scroll: `.project-scroll` measured `498px` client height and `773px` scroll height; a wheel gesture changed `scrollTop` from `0` to `275`.
-- Window chrome: all three traffic-light controls use equal `24px` tracks; titles are left-aligned in the safe area and do not sit under the MacBook notch.
-- Defect project: `/tmp/portfolio-defect-top-1062x582.jpg` shows the video above the fold; `/tmp/portfolio-defect-award-1062x582.jpg` shows the restored certificate at the content end.
-- Ganttodo project: `/tmp/portfolio-ganttodo-top-1062x582.jpg` shows the core preview above the fold after the compact header revision.
-- Zhipu project: `/tmp/portfolio-zhipu-window-1062x582.jpg` shows the compact introduction and notch-safe title.
-- Primary interactions tested: global Enter entry, folder open, window close, project switch, nested project scroll, project navigation, and video-stage buttons remaining reachable.
-- Browser console: final clean run returned no errors or warnings.
+- Intro 不再使用整屏最小高度；标题、说明与时间轴在同一视口内形成连续阅读关系。
+- 标题在 `1062px` 宽度保持单行，字号约 `60px`，没有神秘断行。
+- 教育与项目按同一组年份生成行；`2020 / 2024 / 2025 / 2026` 共享一条纵轴、同一圆点坐标和相等的年度行高。
+- 年份只渲染一次，entry 内不再重复隐藏或占位日期。
 
-## Comparison history
+### MacBook 与滚动
 
-### Iteration 1 findings
+- 文件夹打开仍从所选文件夹原点进行圆形揭示；随后屏幕连续扩展到 Work 舞台，外框淡出。关闭时按反方向收回。
+- 项目切换继续使用带方向的位移与淡入，不瞬切内容。
+- 打开项目后屏幕占满舞台宽度；MacBook 边框不再长期挤压项目内容。
+- 红黄绿按钮使用 `18px` 中心间距与 `10px` 圆点，接近 macOS 窗口密度，三点等距。
+- 鼠标在屏幕区域内滚动时，项目内容从首屏移动到证书末尾；鼠标移到屏幕外侧滚动时，外层页面移动到项目导航与事实条。
+- 浏览器标题位于左侧安全区，不再与设备刘海重叠。
 
-- [P1] The original callout artwork had been replaced with generic HTML arrow and text.
-- [P1] Enter only worked after the ticket button had focus, despite the page-level instruction.
-- [P1] The MacBook project screen did not consume wheel scrolling reliably.
-- [P2] Timeline education and project content shared one lane, producing overlap and oversized entry titles at the annotated viewport.
-- [P2] Fixed desktop navigation, MacBook notch, and oversized project headers collided with or displaced primary content at `1062 × 582`.
+### 四个项目
 
-### Fixes and post-fix evidence
+- 阿里云：首屏呈现两条工作主线，事实与“已确认 / 公开概念 / 待实施”边界保留，未新增未经确认的指标。
+- 智谱：`4 家单位 / 5 个大屏 / 14 个页面 / 3 类 AI 能力`形成事实带；工作流画布已移动到问题与职责之前，并在首屏露出节点。
+- 智能缺陷：16:9 视频成为首屏主体；分类、分割、语义、检索是可点击的视频章节；职责与验证变成横向证据条；奖状保留在页面末尾。
+- Smart Ganttodo：体验区固定 16:9；iframe 使用 `1280 × 720` 逻辑画布并按容器宽度等比缩放，当前截图中没有拉伸、裁成竖屏或与解释栏抢宽。
+- 四个项目标题和摘要已改为一个结论 + 一句上下文，不再重复完整 case-study 模板。
 
-- Restored the three original callout assets and compared them side by side in `/tmp/ticket-comparison-final.jpg`.
-- Added a cover-level Enter handler; a body-level Enter completed the transition and focused the About heading.
-- Consolidated scrolling in `.project-scroll`, stopped wheel propagation, and verified the `0 → 275px` scroll change.
-- Split the timeline into education and project/competition/internship lanes, reduced entry typography, and verified both columns at `1062 × 582`.
-- Moved medium-width navigation to MENU, restored Finder transitions, equalized traffic lights, made window titles notch-safe, and compacted the Defect, Zhipu, and Ganttodo headers.
+### 响应式、可访问性与控制台
 
-## Findings
+- 当前 in-app Browser 的 viewport override 未改变宿主物理视口，因此本轮没有伪造 `390px` 新截图；移动端继续沿用已有断点和上一轮 `390 × 844` 基线，新增事实带、工作流标题、证据条与体验说明均在 `760px` 下切成单栏或两列。
+- `1062 × 582` 实测 `documentElement.scrollWidth - innerWidth == 0`。
+- Enter 可从 Cover 进入；项目按钮、工作流节点、视频章节、关闭按钮均保持键盘语义。
+- `prefers-reduced-motion` 下屏幕、外框、项目和工作流动画均关闭或降级。
+- 最终浏览器控制台没有 error 或 warning。
 
-- No actionable P0, P1, or P2 visual or interaction findings remain in the annotated states.
+## 视觉判断
 
-## Follow-up polish
-
-- No P3 item is required for this annotation round.
+- Timeline 对照中，原来的空白被共享时间轴占用，信息密度增加但仍有清晰段落间距。
+- 缺陷项目对照中，视频从窄栏放大为首屏主体。
+- Ganttodo 对照中，真实网页从半宽裁切改为标准横屏画幅。
+- 智谱对照中，通用目录与问题段落被可操作工作流和项目事实替代。
+- 未发现新的 P0、P1 或 P2 视觉/交互问题。
 
 final result: passed

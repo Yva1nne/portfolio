@@ -28,10 +28,11 @@
           </div>
         </div>
 
-        <div class="iframe-viewport">
+        <div ref="experienceViewport" class="iframe-viewport">
           <iframe
             v-if="!showStaticPreview"
             :src="project.demoUrl"
+            :style="frameStyle"
             title="Smart Ganttodo 在线体验"
             loading="lazy"
             referrerpolicy="no-referrer"
@@ -50,16 +51,18 @@
             >
             <div>
               <p>{{ fallbackLabel }}</p>
-              <h4>不等待网络，也能先看懂项目。</h4>
-              <span>这张预览来自真实项目界面；在线嵌入受网络或站点策略影响时，可继续用上方核心链路和新窗口入口。</span>
+              <h4>真实界面 · 1280 × 720</h4>
+              <span>加载在线体验，或在新窗口打开完整产品。</span>
             </div>
           </div>
         </div>
       </section>
 
       <aside class="example-flow">
-        <p>ONE INPUT, STRUCTURED CONTROL</p>
-        <h4>AI 先生成可编辑初稿。</h4>
+        <header>
+          <p>ONE INPUT, STRUCTURED CONTROL</p>
+          <h4>一句话 → actions → 甘特图 → 拖拽修正</h4>
+        </header>
 
         <div class="example-block">
           <span>示例输入</span>
@@ -78,12 +81,15 @@
           <span>拖拽</span>
         </div>
 
-        <pre aria-label="示例结构化 actions"><code>[
+        <details>
+          <summary>查看结构化 actions</summary>
+          <pre aria-label="示例结构化 actions"><code>[
   { "action": "create", "task": "页面改版",
     "start": "下周一", "end": "下周三" },
   { "action": "create", "task": "验收",
     "start": "下周四", "end": "下周五" }
 ]</code></pre>
+        </details>
 
         <p class="boundary">{{ project.boundary }}</p>
       </aside>
@@ -92,15 +98,24 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { projects } from '../../data/portfolio.js'
 
 const project = projects.ganttodo
+const experienceViewport = ref(null)
 const showStaticPreview = ref(true)
 const frameState = ref('static')
+const frameScale = ref(1)
 let frameTimeout = null
 let frameController = null
 let frameAttempt = 0
+let viewportObserver = null
+
+const frameStyle = computed(() => ({
+  width: '1280px',
+  height: '720px',
+  transform: `scale(${frameScale.value})`,
+}))
 
 const frameStatus = computed(() => {
   const labels = {
@@ -189,25 +204,37 @@ function onFrameLoad() {
   frameState.value = 'online'
 }
 
+function syncFrameScale() {
+  const width = experienceViewport.value?.clientWidth || 1280
+  frameScale.value = Math.max(0.1, width / 1280)
+}
+
+onMounted(() => {
+  syncFrameScale()
+  viewportObserver = new ResizeObserver(syncFrameScale)
+  if (experienceViewport.value) viewportObserver.observe(experienceViewport.value)
+})
+
 onBeforeUnmount(() => {
   frameAttempt += 1
   clearFrameTimeout()
   clearFrameRequest()
+  viewportObserver?.disconnect()
 })
 </script>
 
 <style scoped>
 .ganttodo-project {
   display: grid;
-  gap: clamp(1.2rem, 2vw, 2rem);
-  padding: clamp(1.25rem, 3vw, 2.75rem);
+  gap: clamp(1rem, 1.8vw, 1.65rem);
+  padding: clamp(1rem, 2.2vw, 2rem);
   color: #2a272e;
 }
 
 .project-lead {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
-  gap: 0.55rem clamp(1.25rem, 3vw, 2.8rem);
+  gap: 0.4rem clamp(1.25rem, 3vw, 2.8rem);
   align-items: end;
   max-width: none;
 }
@@ -231,7 +258,7 @@ onBeforeUnmount(() => {
 
 .project-lead h3 {
   max-width: 20ch;
-  font-size: clamp(1.4rem, 2.25vw, 2.15rem);
+  font-size: clamp(1.35rem, 2vw, 1.9rem);
   line-height: 1.08;
 }
 
@@ -247,8 +274,8 @@ onBeforeUnmount(() => {
 
 .demo-layout {
   display: grid;
-  grid-template-columns: minmax(0, 1.75fr) minmax(15rem, 0.75fr);
-  gap: clamp(1.25rem, 3vw, 2.8rem);
+  grid-template-columns: minmax(0, 1fr);
+  gap: clamp(1rem, 2vw, 1.8rem);
   align-items: start;
 }
 
@@ -320,16 +347,21 @@ onBeforeUnmount(() => {
 
 .iframe-viewport {
   position: relative;
-  min-height: clamp(22rem, 42vw, 34rem);
+  width: 100%;
+  min-height: 0;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
   background: #171717;
 }
 
 .iframe-viewport iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: block;
-  width: 100%;
-  height: clamp(22rem, 42vw, 34rem);
   border: 0;
   background: #171717;
+  transform-origin: 0 0;
 }
 
 .iframe-fallback {
@@ -365,7 +397,7 @@ onBeforeUnmount(() => {
   display: grid;
   max-width: 30rem;
   gap: 0.55rem;
-  padding: clamp(1rem, 3vw, 2rem);
+  padding: clamp(0.8rem, 2vw, 1.4rem);
 }
 
 .iframe-fallback h4 {
@@ -381,9 +413,16 @@ onBeforeUnmount(() => {
 .example-flow {
   display: grid;
   min-width: 0;
-  gap: 0.9rem;
-  padding-top: 0.25rem;
+  grid-template-columns: minmax(14rem, 0.75fr) minmax(16rem, 1fr) minmax(18rem, 1.25fr);
+  gap: 1rem clamp(1rem, 2.4vw, 2.2rem);
+  align-items: start;
+  padding-top: 1rem;
   border-top: 2px solid #786a8f;
+}
+
+.example-flow > header {
+  display: grid;
+  gap: 0.65rem;
 }
 
 .example-flow h4 {
@@ -393,8 +432,8 @@ onBeforeUnmount(() => {
 .example-block {
   display: grid;
   gap: 0.5rem;
-  padding-top: 0.8rem;
-  border-top: 1px solid rgba(42, 39, 46, 0.16);
+  padding-top: 0;
+  border-top: 0;
 }
 
 .example-block > span {
@@ -417,6 +456,21 @@ onBeforeUnmount(() => {
   align-items: center;
   color: #5d5563;
   font-size: 0.65rem;
+}
+
+.example-flow details {
+  grid-column: 3;
+  grid-row: 1 / span 3;
+  border-left: 1px solid rgba(42, 39, 46, 0.16);
+  padding-left: clamp(1rem, 2vw, 1.8rem);
+}
+
+.example-flow summary {
+  min-height: 32px;
+  color: #5d5563;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .flow-line span {
@@ -442,6 +496,7 @@ pre {
 }
 
 .boundary {
+  grid-column: 1 / 3;
   color: #746e77 !important;
   font: 400 0.875rem/1.65 var(--font-sans, sans-serif) !important;
   letter-spacing: 0 !important;
@@ -464,10 +519,8 @@ pre {
     grid-template-columns: 1fr;
   }
 
-  .iframe-viewport,
-  .iframe-viewport iframe {
-    min-height: 23rem;
-    height: 23rem;
+  .iframe-viewport {
+    aspect-ratio: 16 / 9;
   }
 
   .experience-bar {
@@ -494,6 +547,23 @@ pre {
 
   pre {
     font-size: 0.75rem;
+  }
+
+  .example-flow {
+    grid-template-columns: 1fr;
+  }
+
+  .example-flow details,
+  .boundary {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .example-flow details {
+    border-top: 1px solid rgba(42, 39, 46, 0.16);
+    border-left: 0;
+    padding-top: 0.8rem;
+    padding-left: 0;
   }
 }
 </style>

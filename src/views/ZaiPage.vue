@@ -9,7 +9,7 @@
       <span>{{ projectOverview.summary }}</span>
     </header>
 
-    <div class="work-layout">
+    <div class="work-layout" :class="{ 'has-active-project': activeProject }">
       <MacBookWorkspace
         :projects="projectList"
         :active-project="activeProject"
@@ -56,50 +56,26 @@
           <article
             v-if="activeProject"
             :key="activeProject.id"
-            class="project-copy"
+            class="project-copy is-active-project"
           >
-            <p>{{ activeProject.kicker }}</p>
-            <h3>{{ activeProject.title }}</h3>
-            <span class="project-summary">{{ activeProject.summary }}</span>
+            <div class="project-copy__identity">
+              <p>{{ activeProject.kicker }}</p>
+              <h3>{{ activeProject.folderName }}</h3>
+              <span class="project-summary">{{ activeProject.summary }}</span>
+            </div>
 
-            <dl>
+            <dl class="project-fact-strip">
               <div>
-                <dt>一句话定位</dt>
+                <dt>ROLE</dt>
+                <dd>{{ activeProject.role }}</dd>
+              </div>
+              <div>
+                <dt>FOCUS</dt>
                 <dd>{{ activeProject.problem }}</dd>
               </div>
               <div>
-                <dt>我的职责</dt>
-                <dd>
-                  <ul>
-                    <li
-                      v-for="responsibility in activeProject.responsibilities"
-                      :key="responsibility"
-                    >
-                      {{ responsibility }}
-                    </li>
-                  </ul>
-                </dd>
-              </div>
-              <div>
-                <dt>方案 / 系统</dt>
-                <dd>{{ activeProject.system }}</dd>
-              </div>
-              <div>
-                <dt>结果与证据</dt>
-                <dd>
-                  <ul>
-                    <li
-                      v-for="evidence in activeProject.evidence"
-                      :key="evidence"
-                    >
-                      {{ evidence }}
-                    </li>
-                  </ul>
-                </dd>
-              </div>
-              <div>
-                <dt>边界 / 复盘</dt>
-                <dd>{{ activeProject.boundary }}</dd>
+                <dt>PROOF</dt>
+                <dd>{{ activeProject.evidence[0] }}</dd>
               </div>
             </dl>
           </article>
@@ -238,6 +214,11 @@ onBeforeUnmount(() => {
   margin: 0 auto;
 }
 
+.work-layout.has-active-project {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 22px;
+}
+
 .project-inspector {
   min-width: 0;
   max-height: min(760px, calc(100svh - 96px));
@@ -299,6 +280,68 @@ onBeforeUnmount(() => {
 .project-copy {
   display: grid;
   gap: 1rem;
+}
+
+.project-copy.is-active-project {
+  grid-template-columns: minmax(220px, 0.72fr) minmax(0, 1.8fr);
+  gap: clamp(18px, 3vw, 42px);
+  align-items: start;
+}
+
+.project-copy__identity {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.project-fact-strip {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0 !important;
+  margin: 0 !important;
+  border-top: 1px solid rgba(25, 27, 27, 0.16);
+}
+
+.project-fact-strip > div {
+  align-content: start;
+  border-top: 0 !important;
+  border-right: 1px solid rgba(25, 27, 27, 0.16);
+  padding: 0.8rem 1rem !important;
+}
+
+.project-fact-strip > div:last-child {
+  border-right: 0;
+}
+
+.work-layout.has-active-project .project-inspector {
+  max-height: none;
+  padding-top: 0;
+  padding-left: 0;
+  border-left: 0;
+}
+
+.work-layout.has-active-project .project-nav {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-bottom: 1.2rem;
+  border-top: 0;
+  border-left: 1px solid rgba(25, 27, 27, 0.18);
+}
+
+.work-layout.has-active-project .project-nav button {
+  display: block;
+  min-height: 3.8rem;
+  border-top: 1px solid rgba(25, 27, 27, 0.18);
+  border-right: 1px solid rgba(25, 27, 27, 0.18);
+  padding: 0.65rem;
+}
+
+.work-layout.has-active-project .project-nav button > span {
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.work-layout.has-active-project .project-nav button > strong {
+  display: block;
+  white-space: normal;
 }
 
 .project-copy h3,
@@ -521,6 +564,36 @@ onBeforeUnmount(() => {
 
   .project-copy {
     padding: 0 12px;
+  }
+
+  .project-copy.is-active-project {
+    grid-template-columns: 1fr;
+  }
+
+  .project-fact-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .project-fact-strip > div {
+    border-right: 0;
+    border-bottom: 1px solid rgba(25, 27, 27, 0.16);
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  .work-layout.has-active-project .project-nav {
+    grid-template-columns: 1fr;
+    border-top: 1px solid rgba(25, 27, 27, 0.18);
+    border-left: 0;
+  }
+
+  .work-layout.has-active-project .project-nav button {
+    display: grid;
+    min-height: 0;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    border-top: 0;
+    border-right: 0;
+    padding: 0.8rem 0;
   }
 
   .project-copy dl {

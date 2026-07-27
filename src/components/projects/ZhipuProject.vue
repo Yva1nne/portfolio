@@ -6,46 +6,19 @@
       <span>{{ project.summary }}</span>
     </header>
 
-    <nav class="project-index" aria-label="智谱项目内容索引">
-      <a v-for="anchor in anchors" :key="anchor.id" :href="`#${anchor.id}`">
-        <span>{{ anchor.number }}</span>
-        {{ anchor.label }}
-      </a>
-    </nav>
-
-    <section id="zhipu-problem" class="reading-section reading-section-split">
-      <header>
-        <p>01 / PROBLEM</p>
-        <h4>问题</h4>
-      </header>
-      <div>
-        <p>{{ project.problem }}</p>
-        <dl class="project-role">
-          <dt>我的角色</dt>
-          <dd>{{ project.role }}</dd>
-        </dl>
+    <dl class="project-facts" aria-label="项目范围">
+      <div v-for="fact in facts" :key="fact.label">
+        <dt>{{ fact.value }}</dt>
+        <dd>{{ fact.label }}</dd>
       </div>
-    </section>
+    </dl>
 
     <section id="zhipu-system" class="reading-section system-section">
       <header>
-        <p>02 / SYSTEM</p>
-        <h4>确定性骨架，受控的模型自由度。</h4>
+        <p>01 / WORKFLOW</p>
+        <h4>把一次语音请求，路由成可控的展示动作。</h4>
         <span>{{ project.system }}</span>
       </header>
-
-      <div class="system-boundary" aria-label="LLM 与 Workflow 的职责边界">
-        <div>
-          <p>LLM / FLEXIBLE</p>
-          <strong>理解、匹配、受控生成</strong>
-          <span>自然语言理解 · 路由匹配 · 受控生成</span>
-        </div>
-        <div>
-          <p>WORKFLOW / DETERMINISTIC</p>
-          <strong>动作、流程、兜底与回归</strong>
-          <span>确定性跳屏 · 讲解流程 · 问答子链路 · 兜底 · 日志 · 回归</span>
-        </div>
-      </div>
 
       <div class="workflow-shell" :class="{ 'has-panel': selectedNode }">
         <div class="workflow-toolbar" role="group" aria-label="工作流视角控制" @pointerdown.stop>
@@ -119,11 +92,38 @@
       </div>
 
       <p class="workflow-hint">桌面可拖动画布与节点；触屏左右滑动画布。节点调整仅影响本次浏览，不会编辑或保存流程。</p>
+
+      <div class="system-boundary" aria-label="LLM 与 Workflow 的职责边界">
+        <div>
+          <p>LLM / FLEXIBLE</p>
+          <strong>理解、匹配、受控生成</strong>
+          <span>自然语言理解 · 路由匹配 · 受控生成</span>
+        </div>
+        <div>
+          <p>WORKFLOW / DETERMINISTIC</p>
+          <strong>动作、流程、兜底与回归</strong>
+          <span>确定性跳屏 · 讲解流程 · 问答子链路 · 兜底 · 日志 · 回归</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="zhipu-problem" class="reading-section reading-section-split">
+      <header>
+        <p>02 / CONTEXT</p>
+        <h4>交付末期的展示整合</h4>
+      </header>
+      <div>
+        <p>{{ project.problem }}</p>
+        <dl class="project-role">
+          <dt>我的角色</dt>
+          <dd>{{ project.role }}</dd>
+        </dl>
+      </div>
     </section>
 
     <section id="zhipu-work" class="reading-section reading-section-split">
       <header>
-        <p>03 / MY WORK</p>
+        <p>03 / CONTRIBUTION</p>
         <h4>我的工作</h4>
       </header>
       <div class="work-evidence">
@@ -152,11 +152,11 @@ import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref } from 'v
 import { projects } from '../../data/portfolio.js'
 
 const project = projects.zhipu
-const anchors = [
-  { id: 'zhipu-problem', number: '01', label: '问题' },
-  { id: 'zhipu-system', number: '02', label: '系统' },
-  { id: 'zhipu-work', number: '03', label: '我的工作' },
-  { id: 'zhipu-boundary', number: '04', label: '边界' },
+const facts = [
+  { value: '4', label: '家单位' },
+  { value: '5', label: '个大屏' },
+  { value: '14', label: '个页面' },
+  { value: '3', label: '类 AI 能力' },
 ]
 
 const workflowViewport = ref(null)
@@ -428,8 +428,8 @@ onBeforeUnmount(() => {
 <style scoped>
 .zhipu-project {
   display: grid;
-  gap: clamp(1.8rem, 4vw, 3.6rem);
-  padding: clamp(1.25rem, 3vw, 2.75rem);
+  gap: clamp(1rem, 1.8vw, 1.6rem);
+  padding: clamp(1rem, 2.2vw, 1.9rem);
   color: #252a31;
 }
 
@@ -461,8 +461,8 @@ onBeforeUnmount(() => {
 }
 
 .project-lead h3 {
-  max-width: 20ch;
-  font-size: clamp(1.4rem, 2.25vw, 2.15rem);
+  max-width: 16ch;
+  font-size: clamp(1.4rem, 2.05vw, 1.95rem);
   line-height: 1.08;
 }
 
@@ -483,27 +483,34 @@ onBeforeUnmount(() => {
   line-height: 1.6;
 }
 
-.project-index {
+.project-facts {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
   border-top: 1px solid rgba(37, 42, 49, 0.22);
   border-bottom: 1px solid rgba(37, 42, 49, 0.22);
 }
 
-.project-index a {
-  display: flex;
-  gap: 0.6rem;
-  align-items: center;
+.project-facts > div {
+  display: grid;
+  gap: 0.2rem;
   min-width: 0;
-  padding: 0.8rem 0.6rem;
+  padding: 0.72rem 0.75rem;
   border-right: 1px solid rgba(37, 42, 49, 0.14);
-  color: #464e58;
-  font-size: 0.75rem;
 }
 
-.project-index a:last-child { border-right: 0; }
-.project-index a:hover { color: #1f252c; background: rgba(89, 106, 135, 0.07); }
-.project-index span { color: var(--project-accent); font-size: 0.62rem; }
+.project-facts > div:last-child { border-right: 0; }
+.project-facts dt {
+  color: #252a31;
+  font: 500 clamp(1.35rem, 2.4vw, 2.15rem)/1 var(--font-serif, serif);
+}
+.project-facts dd {
+  margin: 0;
+  color: #68717b;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
 
 .reading-section {
   scroll-margin-top: 5rem;
@@ -519,7 +526,7 @@ onBeforeUnmount(() => {
 
 .reading-section h4 {
   margin-top: 0.45rem;
-  font-size: clamp(1.3rem, 2.3vw, 2rem);
+  font-size: clamp(1.25rem, 2vw, 1.8rem);
   line-height: 1.12;
 }
 
@@ -544,8 +551,15 @@ onBeforeUnmount(() => {
 .project-role dd,
 .work-evidence dd { margin: 0; }
 
-.system-section { display: grid; gap: 1.3rem; }
-.system-section > header { display: grid; max-width: 52rem; gap: 0.45rem; }
+.system-section { display: grid; gap: 1rem; }
+.system-section > header {
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.85fr) minmax(0, 1.15fr);
+  gap: 0.45rem clamp(1.5rem, 4vw, 4rem);
+  max-width: none;
+  align-items: end;
+}
+.system-section > header > p { grid-column: 1 / -1; }
 .system-section > header > span { margin-top: 0.35rem; }
 
 .system-boundary {
@@ -567,7 +581,7 @@ onBeforeUnmount(() => {
 
 .workflow-shell {
   position: relative;
-  height: clamp(32rem, 64vh, 40rem);
+  height: clamp(27rem, 62vh, 36rem);
   min-height: 0;
   overflow: hidden;
   border: 1px solid rgba(37, 42, 49, 0.2);
@@ -770,10 +784,12 @@ onBeforeUnmount(() => {
   .zhipu-project { gap: 1.7rem; padding: 1rem; }
   .project-lead { grid-template-columns: 1fr; }
   .project-lead > p { grid-column: auto; }
-  .project-index { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .project-index a:nth-child(2) { border-right: 0; }
-  .project-index a:nth-child(-n + 2) { border-bottom: 1px solid rgba(37, 42, 49, 0.14); }
+  .project-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-facts > div:nth-child(2) { border-right: 0; }
+  .project-facts > div:nth-child(-n + 2) { border-bottom: 1px solid rgba(37, 42, 49, 0.14); }
   .reading-section-split { grid-template-columns: 1fr; gap: 1rem; }
+  .system-section > header { grid-template-columns: 1fr; }
+  .system-section > header > p { grid-column: auto; }
   .system-boundary { grid-template-columns: 1fr; }
   .system-boundary > div:first-child { border-right: 0; border-bottom: 1px solid rgba(37, 42, 49, 0.16); }
   .workflow-shell { height: 36rem; }

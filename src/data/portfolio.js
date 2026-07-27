@@ -149,8 +149,8 @@ export const projects = {
     id: 'aliyun',
     folderName: '阿里云数据库实习',
     kicker: '2026.06 — NOW / ALIBABA CLOUD',
-    title: '让数据库 AI 从“能回答”，走向“能工作”。',
-    summary: '围绕两条主线工作：数据库 AI 助手侧参与功能设计、Skills 优化、测试与商业化落地；内部运维 AI 助手侧当前负责能力和接入情况梳理、功能文档与需求推进，新一轮接入和优化尚待实施。',
+    title: '数据库 AI，从回答走向执行。',
+    summary: '两条工作主线：推进数据库 AI 助手的功能、Skills 与商业化；梳理内部运维 AI 助手的能力与接入需求。',
     role: '数据库产品经理实习生',
     problem: '如何从数据库用户的真实任务出发，把模型、Skills、工具和平台状态组织成可交付、可验证的产品能力。',
     responsibilities: [
@@ -170,8 +170,8 @@ export const projects = {
     id: 'zhipu',
     folderName: '智谱华章实习',
     kicker: '2025.12 — 2026.05 / ZHIPU AI',
-    title: '把复杂 ToB AI 项目，组织成可讲、可演、可追问的系统。',
-    summary: '围绕城智大模型大屏，把语音入口、ASR 纠错、意图路由、页面跳转、场景讲解和问答子流程串成展示型 LLM-driven workflow。',
+    title: '让复杂项目可讲、可演、可追问。',
+    summary: '围绕城智大模型展示，组织 4 家单位材料、5 个大屏与 14 个页面，并设计 ASR 纠错、意图路由和受控问答。',
     role: 'AI 产品经理实习生',
     problem: '在项目交付末期，把分散的业务材料、项目成果和演示诉求组织成稳定的展示与自然语言交互链路。',
     responsibilities: [
@@ -191,8 +191,8 @@ export const projects = {
     id: 'defect',
     folderName: '智能缺陷分析系统',
     kicker: '2024.09 — 2025.07 / INDUSTRIAL AI',
-    title: '把四个模型结果，组织成工程师可判断的辅助报告。',
-    summary: '面向半导体产线 YE 工程师 RCA 阶段，整合缺陷分类、分割、语义描述和历史根因检索，帮助工程师快速理解缺陷并缩小排查范围。',
+    title: '四路模型结果，汇成工程辅助报告。',
+    summary: '分类、分割、形貌描述与相似案例检索，在一分钟演示里完成串联。',
     role: '产品 + 核心开发成员',
     problem: '缺陷分析结果分散，工程师需要在 RCA 阶段快速理解缺陷并定位可复用的历史线索。',
     responsibilities: [
@@ -214,8 +214,8 @@ export const projects = {
     id: 'ganttodo',
     folderName: '甘特图风格化待办系统',
     kicker: '2025.09 — 2025.12 / INDEPENDENT MVP',
-    title: '用自然语言生成计划，再用甘特图把它改对。',
-    summary: '一个轻量个人工作流 MVP：用自然语言降低任务创建和调整成本，用甘特图表达跨天、并行和长期任务，并保留拖拽修正的用户控制。',
+    title: '一句话排计划，拖动甘特图修正。',
+    summary: '自然语言生成结构化 actions，再由用户拖拽调整任务时间。',
     role: 'AI 产品经理 / 独立开发',
     problem: '传统待办列表不擅长表达跨天和并行任务，重型项目管理工具又增加了个人使用成本。',
     responsibilities: [
