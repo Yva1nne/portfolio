@@ -1,6 +1,6 @@
 # Portfolio redesign handoff
 
-更新时间：2026-07-27
+更新时间：2026-07-28
 
 仓库：`/Users/yvaine/Documents/current/resume/web-vue`
 
@@ -8,7 +8,7 @@
 
 分支：`main`
 
-实现末次提交：`76e16c3`。本文件与最终截图作为最后一个文档 checkpoint 提交；交付前已再次确认 `HEAD == origin/main`。
+批注修订末次提交：`e7670de`。本文件作为后续文档 checkpoint 提交；交付前再次确认 `HEAD == origin/main`。
 
 ## 结论
 
@@ -17,12 +17,12 @@
 - 页面顺序为 Cover / About / Timeline / Work，没有新增 Contact、Footer 或 Hobby 页面。
 - Cover 保留票根拖动和 Enter 入口，并继续履行 `transition-complete` 事件契约。
 - About 已填入完整定位、简介、四组能力证据、教育、所在地、邮箱和 GitHub。
-- Timeline 是独立的七段长滚动经历；跨工艺建模只在时间轴出现。
+- Timeline 按教育经历、项目/比赛/实习双栏呈现七段经历；跨工艺建模只在时间轴出现。
 - MacBook 默认停留在桌面，四个项目入口同尺寸、同层级、无默认主项目，顺序为阿里云、智谱、智能缺陷、Smart Ganttodo。
 - 固定导航、本地音乐、自定义鼠标、键盘焦点、触屏横滑和 reduced-motion 均有降级。
 - Hobby 与二期小黑猫助手明确延期，未创建、挂载或验收。
 
-唯一需要所有者醒后决策的事项是公开 Git 历史中的旧证书文件，详见“隐私与醒后决策”。当前页面和生产产物已经移除证书，但不改写历史就不能撤回旧 blob。
+2026-07-28 的批注明确要求在智能缺陷项目末尾嵌入获奖证书，因此当前页面、生产产物和公开仓库均包含该图片；公开范围详见“隐私与公开素材”。
 
 ## 恢复与验证
 
@@ -41,9 +41,9 @@ npm run preview -- --host 127.0.0.1 --port 4173
 
 最终构建结果：
 
-- Vite `8.0.16`，48 个模块。
+- Vite `8.0.16`，50 个模块。
 - `npm run build` 退出码为 `0`，无构建 warning。
-- `dist/` 为约 `16 MB`、33 个文件。
+- `dist/` 为约 `16 MB`、35 个文件。
 - 生产预览中票根、笔记本、MacBook、双格式音频、演示视频和 Ganttodo 静态图均返回 HTTP `200`。
 
 ## 已推送 checkpoints
@@ -74,6 +74,8 @@ npm run preview -- --host 127.0.0.1 --port 4173
 | `0fd5548` | 移动播放器安全区、大屏触屏画布与在线体验预检 |
 | `a583483` | 展开播放器控制时同步扩大内容安全区 |
 | `76e16c3` | 在线体验预检可随时取消并恢复静态模式 |
+| `417ed3b` | 记录一期最终验证与交付文档 |
+| `e7670de` | 落实 2026-07-28 浏览器批注：文案、双栏时间轴、MacBook 动画与项目排版 |
 
 四个项目最初在同一个页面 checkpoint 中提交，而不是拆成四个 commit；这是已经推送的历史粒度偏差，不为追求形式而改写历史。
 
@@ -119,7 +121,9 @@ npm run preview -- --host 127.0.0.1 --port 4173
 - Ganttodo 可达地址实测进入 online 且 iframe 数量为 `1`；另临时替换为不可达本地地址做负向验收，`900ms` 内状态自动变为“在线体验不可用”，iframe 数量保持 `0`、静态 fallback 保留。再用延迟 `10s` 的本地响应实测 loading 阶段取消，`250ms` 后恢复静态模式、iframe 仍为 `0`。所有测试地址随后恢复并重新构建。
 - 用户主动加载 Smart Ganttodo 后，上游 iframe 仍可能输出 Tailwind CDN production warning；默认静态模式不会创建 iframe。该 warning 需在 Smart Ganttodo 仓库修复，不能由宿主页消除。
 
-## 最终截图
+## 一期基线截图
+
+以下截图记录批注修订前的一期验收基线；2026-07-28 的批注修订以仓库根目录 [design-qa.md](../design-qa.md) 和当前生产预览为准。
 
 页面与断点：
 
@@ -163,18 +167,18 @@ npm run preview -- --host 127.0.0.1 --port 4173
 - MP3 SHA-256：`5687e8a3013d44c59662fca3e7d3c14a91a13097bdfba9f96c7b3ffba0dc694c`
 - 两种格式都在仓库内运行，不热链第三方音频。
 
-## 隐私与醒后决策
+## 隐私与公开素材
 
-### 需要所有者决定：公开 Git 历史中的证书
+### 已按批注公开：获奖证书
 
-2026-07-26 再次通过 GitHub API 确认仓库 `Yva1nne/portfolio` 为 public。当前 `public/` 和生产产物中已经没有证书，但 `origin/main` 仍包含旧提交 `34fe022`，其 PDF/PNG blob 可从历史恢复：
+2026-07-26 再次通过 GitHub API 确认仓库 `Yva1nne/portfolio` 为 public。2026-07-28 用户明确要求将奖状图片嵌入项目末尾，当前 `public/`、生产产物和 `origin/main` 均包含 PNG；旧提交 `34fe022` 同时保留 PDF/PNG blob：
 
 ```text
 d7f9ed4bbbb5bf79c4f78dfc38abf6daeddb3b1a public/project/获奖证书.pdf
 d2056b31c710745bfa4703f2ee196d949bf09545 public/project/获奖证书.png
 ```
 
-文件含证书编号、验证二维码、本人及其他成员/导师姓名。真正撤回需要所有者确认后执行 `git filter-repo` 或 BFG、force-push，并判断是否需要联系证书方使二维码/编号失效。本 Session 没有擅自改写公共历史。
+文件含证书编号、验证二维码、本人及其他成员/导师姓名。当前公开状态来自用户的显式批注；若后续决定撤回，需要替换当前素材，并执行 `git filter-repo` 或 BFG、force-push，必要时联系证书方处理二维码/编号。本 Session 没有改写公共历史。
 
 当前原件按原字节保存在：
 
@@ -213,5 +217,5 @@ d2056b31c710745bfa4703f2ee196d949bf09545 public/project/获奖证书.png
 | 交互 | Hover、导航、音乐、cursor、键盘、触屏、Ganttodo fallback 和 reduced-motion 通过。 |
 | 响应式 | `390 / 768 / 1024 / 1280 / 1440 / 2200` 均无横向溢出。 |
 | 性能 | 首屏分阶段挂载，视频/iframe/大图按需；生产构建无 warning，`dist/` 约 16 MB。 |
-| 隐私 | 当前树无证书，Hobby metadata 清零；旧公开 Git 历史等待所有者决策。 |
+| 隐私 | 奖状已按用户显式批注公开；Hobby metadata 清零且不进入生产产物。 |
 | Git | 所有实现 commits 已推送；最终文档/截图 checkpoint 推送后再次核对 `HEAD == origin/main`。 |
