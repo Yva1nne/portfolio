@@ -50,10 +50,12 @@ defineProps({
 .timeline-entry {
   position: relative;
   min-height: 0;
-  padding: clamp(28px, 4vh, 42px) clamp(18px, 2.8vw, 34px) clamp(36px, 5vh, 54px);
+  padding: clamp(20px, 3vh, 30px) clamp(18px, 2.4vw, 28px);
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.16);
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity 460ms ease, transform 460ms ease;
+  transition: opacity 460ms ease, transform 460ms ease, background 240ms ease;
 }
 
 .timeline-entry.is-revealed {
@@ -62,22 +64,8 @@ defineProps({
 }
 
 .timeline-entry.is-active {
+  background: rgba(255, 255, 255, 0.52);
   opacity: 1;
-}
-
-.timeline-entry::before {
-  position: absolute;
-  top: -1px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--ink);
-  content: '';
-  transition: width 240ms ease;
-}
-
-.timeline-entry.is-active::before {
-  width: clamp(52px, 7vw, 96px);
 }
 
 .timeline-entry__header {
@@ -117,7 +105,7 @@ defineProps({
 .timeline-entry h3 {
   max-width: 20ch;
   margin-top: 18px;
-  font-size: clamp(24px, 2.35vw, 32px);
+  font-size: clamp(22px, 2vw, 28px);
   line-height: 1.08;
 }
 
@@ -196,8 +184,7 @@ defineProps({
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .timeline-entry,
-  .timeline-entry::before {
+  .timeline-entry {
     transition: none;
   }
 }

@@ -59,7 +59,6 @@
               :data-node-id="node.id"
               :style="{ left: `${node.x}%`, top: `${node.y}%` }"
               :aria-label="`${node.id} ${node.name}，${node.brief}`"
-              @focus="focusNode(node.id, $event)"
               @click="activateNode(node.id)"
               @pointerdown="startNodeDrag($event, node)"
             >
@@ -74,6 +73,7 @@
         </div>
 
         <aside
+          ref="nodePanel"
           class="node-panel"
           :class="{ 'is-open': selectedNode }"
           :aria-hidden="!selectedNode"
@@ -88,10 +88,17 @@
           </header>
           <strong>{{ selectedNode?.name }}</strong>
           <span>{{ selectedNode?.detail }}</span>
+          <div v-if="selectedNode?.promptBlueprint" class="prompt-blueprint">
+            <p>PROMPT BLUEPRINT / 脱敏结构</p>
+            <ol>
+              <li v-for="item in selectedNode.promptBlueprint" :key="item">{{ item }}</li>
+            </ol>
+            <code v-if="selectedNode.promptExample">{{ selectedNode.promptExample }}</code>
+          </div>
         </aside>
       </div>
 
-      <p class="workflow-hint">桌面可拖动画布与节点；触屏左右滑动画布。节点调整仅影响本次浏览，不会编辑或保存流程。</p>
+      <p class="workflow-hint">桌面可拖动画布与节点；触屏左右滑动画布。</p>
 
       <div class="system-boundary" aria-label="LLM 与 Workflow 的职责边界">
         <div>
@@ -105,44 +112,6 @@
           <span>确定性跳屏 · 讲解流程 · 问答子链路 · 兜底 · 日志 · 回归</span>
         </div>
       </div>
-    </section>
-
-    <section id="zhipu-problem" class="reading-section reading-section-split">
-      <header>
-        <p>02 / CONTEXT</p>
-        <h4>交付末期的展示整合</h4>
-      </header>
-      <div>
-        <p>{{ project.problem }}</p>
-        <dl class="project-role">
-          <dt>我的角色</dt>
-          <dd>{{ project.role }}</dd>
-        </dl>
-      </div>
-    </section>
-
-    <section id="zhipu-work" class="reading-section reading-section-split">
-      <header>
-        <p>03 / CONTRIBUTION</p>
-        <h4>我的工作</h4>
-      </header>
-      <div class="work-evidence">
-        <ol>
-          <li v-for="item in project.responsibilities" :key="item">{{ item }}</li>
-        </ol>
-        <dl>
-          <div v-for="item in project.evidence" :key="item">
-            <dt>证据</dt>
-            <dd>{{ item }}</dd>
-          </div>
-        </dl>
-      </div>
-    </section>
-
-    <section id="zhipu-boundary" class="reading-section boundary-section">
-      <p>04 / BOUNDARY</p>
-      <h4>边界</h4>
-      <blockquote>{{ project.boundary }}</blockquote>
     </section>
   </article>
 </template>
@@ -161,6 +130,7 @@ const facts = [
 
 const workflowViewport = ref(null)
 const workflowCanvas = ref(null)
+const nodePanel = ref(null)
 const selectedNodeId = ref(null)
 const activeNodeId = ref(null)
 const isPanning = ref(false)
@@ -177,15 +147,29 @@ let resizeObserver = null
 
 const nodes = reactive([
   { id: 'N0', name: 'ASR 纠错', type: 'Preprocess', next: ['N1'], brief: '修正语音转写', detail: '语音路径的第一步。修正专名、口误和识别偏差，把输入整理为更稳定的文本后再进入意图路由。', x: 4, y: 45 },
-  { id: 'N1', name: '一级意图识别', type: 'Router', next: ['N2', 'N3', 'N5', 'N6', 'N7'], brief: '识别用户意图', detail: '识别跳转、讲解、问答、通用回复、澄清等一级意图。这里负责路由匹配，不直接承担完整回答。', x: 20, y: 45 },
+  {
+    id: 'N1', name: '一级意图识别', type: 'Router', next: ['N2', 'N3', 'N5', 'N6', 'N7'], brief: '识别用户意图', detail: '识别跳转、讲解、问答、通用回复、澄清等一级意图。这里负责路由匹配，不直接承担完整回答。', x: 20, y: 45,
+    promptBlueprint: ['角色与路由任务', '当前 current_id / current_datetime', '意图词典与判定规则', 'few-shot 输出示例', '仅输出可解析 JSON'],
+    promptExample: '{ "mode": "...", "domain": "...", "text": "..." }',
+  },
   { id: 'N2', name: '页面跳转', type: 'Action', next: [], brief: '切换目标页面', detail: '把跳转请求交给前端执行确定性页面动作，让现场演示保持稳定、可复现。', x: 40, y: 8 },
   { id: 'N3', name: '场景讲解', type: 'Action', next: [], brief: '执行讲解流程', detail: '进入对应场景后触发与页面状态绑定的讲解流程，避免脱离当前展示内容自由发挥。', x: 40, y: 26 },
-  { id: 'N5', name: '问答入口', type: 'Router', next: ['N5-1'], brief: '进入场景问答', detail: '把问答请求路由到场景问答子流程，使主路由与具体回答逻辑解耦。', x: 40, y: 44 },
+  {
+    id: 'N5', name: '问答入口', type: 'Router', next: ['N5-1'], brief: '进入场景问答', detail: '把问答请求路由到场景问答子流程，使主路由与具体回答逻辑解耦。', x: 40, y: 44,
+    promptBlueprint: ['输入：current_id + 用户问题', '模板命中优先', '未命中时读取当前场景资料', '信息不足转澄清', '范围外转兜底'],
+    promptExample: 'context + question → template / generate / clarify / other',
+  },
   { id: 'N6', name: '通用回复', type: 'LLM', next: [], brief: '处理通用问题', detail: '承接基础互动，同时保持业务问答边界，不把生成范围无限扩大。', x: 40, y: 62 },
   { id: 'N7', name: '澄清与拦截', type: 'LLM', next: [], brief: '澄清或拒答', detail: '遇到歧义时请求补充信息；遇到越界请求时拒答，并提示当前支持范围。', x: 40, y: 80 },
-  { id: 'N5-1', name: '场景问答模板匹配', type: 'Router', next: ['N5-2', 'N5-3', 'N5-4'], brief: '匹配标准问题', detail: '判断问题是否命中预设问答模板；未命中时再进入受控的自主问答或兜底分支。', x: 60, y: 44 },
+  {
+    id: 'N5-1', name: '场景问答模板匹配', type: 'Router', next: ['N5-2', 'N5-3', 'N5-4'], brief: '匹配标准问题', detail: '判断问题是否命中预设问答模板；未命中时再进入受控的自主问答或兜底分支。', x: 60, y: 44,
+    promptBlueprint: ['场景标准问题集合', '用户问题归一化', '相似模板与 few-shot', '输出匹配分支'],
+  },
   { id: 'N5-2', name: '模板回答', type: 'QA', next: [], brief: '回答标准问题', detail: '命中模板后按稳定口径组织回答，优先保证高频问题的完整性与可控性。', x: 80, y: 28 },
-  { id: 'N5-3', name: '自主问答', type: 'QA', next: [], brief: '受控生成回答', detail: '未命中标准模板时，结合当前场景资料受控生成回答，并保持场景一致性。', x: 80, y: 46 },
+  {
+    id: 'N5-3', name: '自主问答', type: 'QA', next: [], brief: '受控生成回答', detail: '未命中标准模板时，结合当前场景资料受控生成回答，并保持场景一致性。', x: 80, y: 46,
+    promptBlueprint: ['当前场景资料', '用户问题', '专业问答模板 few-shot', '仅基于给定材料', '信息不足时转兜底'],
+  },
   { id: 'N5-4', name: '兜底回复', type: 'LLM', next: [], brief: '处理范围外问题', detail: '不适合继续生成时回到当前支持范围，避免输出不确定或越界内容。', x: 80, y: 64 },
 ])
 
@@ -211,8 +195,20 @@ function viewBounds(scale = view.scale) {
   const canvas = workflowCanvas.value
   if (!viewport || !canvas) return { minX: 0, maxX: 0, minY: 0, maxY: 0 }
 
+  const panelWidth = selectedNode.value ? (nodePanel.value?.offsetWidth || 0) + 24 : 0
+  const visibleWidth = Math.max(0, viewport.clientWidth - panelWidth)
+
+  if (selectedNode.value) {
+    return {
+      minX: visibleWidth / 2 - canvas.offsetWidth * scale + canvasInset,
+      maxX: visibleWidth / 2 - canvasInset,
+      minY: viewport.clientHeight / 2 - canvas.offsetHeight * scale + canvasInset,
+      maxY: viewport.clientHeight / 2 - canvasInset,
+    }
+  }
+
   return {
-    minX: Math.min(0, viewport.clientWidth - canvas.offsetWidth * scale - canvasInset),
+    minX: Math.min(0, visibleWidth - canvas.offsetWidth * scale - canvasInset),
     maxX: canvasInset,
     minY: Math.min(0, viewport.clientHeight - canvas.offsetHeight * scale - canvasInset),
     maxY: canvasInset,
@@ -359,11 +355,6 @@ function stopNodeDrag() {
   window.setTimeout(() => { suppressClickNodeId = null }, 0)
 }
 
-function focusNode(nodeId, event) {
-  selectedNodeId.value = nodeId
-  if (event?.currentTarget.matches(':focus-visible')) revealNode(nodeId)
-}
-
 function activateNode(nodeId) {
   if (suppressClickNodeId === nodeId) return
   selectedNodeId.value = nodeId
@@ -380,8 +371,9 @@ function revealNode(nodeId) {
 
       const viewportRect = viewport.getBoundingClientRect()
       const nodeRect = node.getBoundingClientRect()
+      const panelWidth = selectedNode.value ? (nodePanel.value?.offsetWidth || 0) + 24 : 0
       const renderedScale = canvas.getBoundingClientRect().width / canvas.offsetWidth || 1
-      const targetX = viewportRect.left + viewportRect.width / 2
+      const targetX = viewportRect.left + (viewportRect.width - panelWidth) / 2
       const targetY = viewportRect.top + viewportRect.height / 2
       setView(
         view.x + (targetX - nodeRect.left - nodeRect.width / 2) / renderedScale,
@@ -393,7 +385,10 @@ function revealNode(nodeId) {
 
 function closeNodePanel() {
   selectedNodeId.value = null
-  nextTick(() => workflowViewport.value?.focus({ preventScroll: true }))
+  nextTick(() => {
+    setView(view.x, view.y)
+    workflowViewport.value?.focus({ preventScroll: true })
+  })
 }
 
 function nodeTypeClass(type) {
@@ -445,7 +440,6 @@ onBeforeUnmount(() => {
 
 .project-lead p,
 .reading-section header > p,
-.boundary-section > p,
 .system-boundary p {
   margin: 0;
   color: var(--project-accent);
@@ -518,38 +512,11 @@ onBeforeUnmount(() => {
   padding-top: 1rem;
 }
 
-.reading-section-split {
-  display: grid;
-  grid-template-columns: minmax(9rem, 0.55fr) minmax(0, 1.45fr);
-  gap: clamp(1.3rem, 4vw, 4rem);
-}
-
 .reading-section h4 {
   margin-top: 0.45rem;
   font-size: clamp(1.25rem, 2vw, 1.8rem);
   line-height: 1.12;
 }
-
-.reading-section-split > div > p { margin: 0; }
-
-.project-role {
-  display: grid;
-  grid-template-columns: 6rem 1fr;
-  gap: 0.8rem;
-  margin: 1.3rem 0 0;
-  padding-top: 0.8rem;
-  border-top: 1px solid rgba(37, 42, 49, 0.14);
-}
-
-.project-role dt,
-.work-evidence dt {
-  color: #303741;
-  font-size: 0.7rem;
-  font-weight: 700;
-}
-
-.project-role dd,
-.work-evidence dd { margin: 0; }
 
 .system-section { display: grid; gap: 1rem; }
 .system-section > header {
@@ -749,22 +716,46 @@ onBeforeUnmount(() => {
 .node-panel > strong { font-family: var(--font-serif, serif); font-size: 1.25rem; }
 .node-panel > span { font-size: 0.9375rem; }
 
-.workflow-hint { margin: -0.5rem 0 0; font-size: 0.7rem !important; }
-
-.work-evidence { display: grid; gap: 1.2rem; }
-.work-evidence ol { display: grid; gap: 0.65rem; margin: 0; padding-left: 1.2rem; }
-.work-evidence dl { display: grid; gap: 0; margin: 0; border-top: 1px solid rgba(37, 42, 49, 0.16); }
-.work-evidence dl > div { display: grid; grid-template-columns: 4rem 1fr; gap: 0.8rem; padding: 0.75rem 0; border-bottom: 1px solid rgba(37, 42, 49, 0.12); }
-
-.boundary-section { display: grid; gap: 0.45rem; }
-.boundary-section blockquote {
-  max-width: 52rem;
-  margin: 0.5rem 0 0;
-  padding: 0 0 0 1rem;
-  border-left: 2px solid var(--project-accent);
-  color: #4f5863;
-  font: 500 clamp(0.9rem, 1.4vw, 1.08rem)/1.75 var(--font-sans, sans-serif);
+.prompt-blueprint {
+  display: grid;
+  gap: 0.65rem;
+  margin-top: 0.4rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(37, 42, 49, 0.16);
 }
+
+.prompt-blueprint > p {
+  margin: 0;
+  color: var(--project-accent);
+  font: 800 0.6rem/1.2 var(--font-sans, sans-serif);
+  letter-spacing: 0.1em;
+}
+
+.prompt-blueprint ol {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.prompt-blueprint li {
+  color: #5b6570;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.prompt-blueprint code {
+  display: block;
+  overflow-wrap: anywhere;
+  padding: 0.7rem;
+  background: rgba(80, 110, 159, 0.08);
+  color: #3f4c5d;
+  font-size: 0.68rem;
+  line-height: 1.5;
+  white-space: normal;
+}
+
+.workflow-hint { margin: -0.5rem 0 0; font-size: 0.7rem !important; }
 
 @media (max-width: 1080px), (any-pointer: coarse) {
   .workflow-viewport {
@@ -787,7 +778,6 @@ onBeforeUnmount(() => {
   .project-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .project-facts > div:nth-child(2) { border-right: 0; }
   .project-facts > div:nth-child(-n + 2) { border-bottom: 1px solid rgba(37, 42, 49, 0.14); }
-  .reading-section-split { grid-template-columns: 1fr; gap: 1rem; }
   .system-section > header { grid-template-columns: 1fr; }
   .system-section > header > p { grid-column: auto; }
   .system-boundary { grid-template-columns: 1fr; }
@@ -808,8 +798,7 @@ onBeforeUnmount(() => {
   .reading-section dd,
   .reading-section li,
   .system-boundary span,
-  .node-panel > span,
-  .boundary-section blockquote {
+  .node-panel > span {
     font-size: 0.9375rem;
   }
   .system-boundary strong { font-size: 0.9375rem; }

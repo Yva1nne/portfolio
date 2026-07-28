@@ -4,8 +4,8 @@ export const profile = {
   edition: 'Portfolio · 2026',
   headline: '从问题出发，做 AI 产品。',
   introduction: [
-    '我享受从复杂、抽象的问题里拆出清晰的用户任务、业务链路和产品方案。能写 Prompt、画原型，也会借助 AI Coding 做出可运行原型，让判断进入真实交互。',
-    '我习惯先定义问题、拆解场景，再决定哪些交给模型，哪些由确定性流程和数据约束。AI 能力最终需要对应清晰的用户任务与产品边界。',
+    '把抽象问题拆成用户任务、业务链路与产品方案，再用原型让判断进入真实交互。',
+    '先定义问题与场景，再划分模型自由度、确定性流程和数据约束。',
   ],
   meta: [
     { label: 'EDUCATION', value: '浙江大学 · 电子信息硕士（预计 2027.06）' },
@@ -21,28 +21,28 @@ export const capabilities = [
     number: '01',
     label: 'PRODUCT JUDGMENT',
     keywords: '问题定义、场景拆解、PRD、原型、需求优先级。',
-    evidence: '在数据库 AI 助手项目中梳理入口逻辑、版本能力与 Skill / Tool 配置，并参与测试和商业化推进。',
+    evidence: '数据库 AI 助手：入口逻辑、版本能力、Skill / Tool 配置、测试与商业化推进。',
   },
   {
     id: 'agent',
     number: '02',
     label: 'AGENT & WORKFLOW',
     keywords: 'Prompt、Skills、Agent、Workflow、AG-UI、记忆与评估。',
-    evidence: '判断模型自由度与确定性流程的边界，并通过 badcase 和回归持续优化。',
+    evidence: '用 badcase、回归与规则边界，约束模型与流程的分工。',
   },
   {
     id: 'engineering',
     number: '03',
     label: 'AI & ENGINEERING',
     keywords: 'Python、PyTorch、CV、API 集成、Docker。',
-    evidence: '能够读懂系统与模型约束，也能做出可运行原型推进方案讨论。',
+    evidence: '读系统与模型约束，做可运行原型，推进方案讨论。',
   },
   {
     id: 'prototype',
     number: '04',
     label: 'PROTOTYPE & AI CODING',
     keywords: 'Figma、Axure、Prompt、AI Coding、交互原型。',
-    evidence: '用原型工具与 AI Coding 把需求快速做成可体验的界面，让方案进入真实交互。',
+    evidence: '用 Figma、Axure 与 AI Coding，把需求落成可体验界面。',
   },
 ]
 

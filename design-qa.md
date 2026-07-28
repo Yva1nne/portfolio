@@ -2,61 +2,68 @@
 
 ## 本轮范围
 
-- 视口：`1062 × 582` CSS px，覆盖用户批注出现的实际窗口比例。
-- 目标：修复 Timeline 留白与双栏坐标；恢复 Mac 文件夹转场；把项目窗口扩展成阅读主舞台；让四个项目分别以工作流、视频、真实网页和产品地图为首要证据。
-- 研究结论与来源：[`docs/project-showcase-research.md`](docs/project-showcase-research.md)。
+- 视口：重点复验 `1062 × 752` CSS px，并在 `1280 × 720` 宽屏状态检查完整项目页。
+- 目标：收口 Cover、About、Timeline、MacBook 舞台及四个项目页的浏览器批注；保留既有纸张、票根、macOS 桌面和编辑感设计语言。
+- 参考研究：[`docs/project-showcase-research.md`](docs/project-showcase-research.md)。版式判断同时参考 Codrops 案例研究、精选作品集案例和时间轴可视化研究，不复制具体页面。
 
 ## 同屏对照
 
-- Timeline 批注前：`/tmp/portfolio-timeline-1062x582.jpg`
-- Timeline 修订后：`/tmp/portfolio-timeline-intro-revised-1062x582.jpg`
-- Timeline 合并对照：`/tmp/timeline-before-after.jpg`
-- 缺陷项目合并对照：`/tmp/defect-before-after.jpg`
-- Ganttodo 合并对照：`/tmp/ganttodo-before-after.jpg`
-- 智谱项目合并对照：`/tmp/zhipu-before-after.jpg`
+- Cover 合并对照：[`docs/validation/annotation-cover-comparison.png`](docs/validation/annotation-cover-comparison.png)
+- About 合并对照：[`docs/validation/annotation-about-comparison.png`](docs/validation/annotation-about-comparison.png)
+- Timeline 当前实现：[`docs/validation/annotation-timeline-after.png`](docs/validation/annotation-timeline-after.png)
+- 项目开窗转场：[`docs/validation/annotation-transition-after.png`](docs/validation/annotation-transition-after.png)
+- Ganttodo 静态回退：[`docs/validation/annotation-ganttodo-fallback-after.png`](docs/validation/annotation-ganttodo-fallback-after.png)
+- 缺陷项目能力地图：[`docs/validation/annotation-defect-map-after.png`](docs/validation/annotation-defect-map-after.png)
+- 智谱右侧节点居中：[`docs/validation/annotation-zhipu-centered-after.png`](docs/validation/annotation-zhipu-centered-after.png)
+- 智谱脱敏提示词结构：[`docs/validation/annotation-zhipu-prompt-after.png`](docs/validation/annotation-zhipu-prompt-after.png)
 
-所有合并图都保持左右两侧同为 `1062 × 582`，没有重采样其中一侧。左侧是批注状态，右侧是当前实现。
+Cover 与 About 的左右两侧使用相同 `648 × 752` 视口和对应状态；已在同一张合并图中检查对齐、文本密度、焦点线框和断行。
 
 ## 验收结果
 
+### Cover 与 About
+
+- 票根虚线框与可拖动存根同宽同角度；箭头和手写说明分离，不再与票根或文字重叠。
+- Enter 可以从 Cover 进入作品集。
+- About 标题不再出现偶发焦点线框；正文缩成两段，新增 `DEFINE / DIVIDE / PROTOTYPE` 编辑式方法条，能力栈以细色线建立层级。
+- 联系方式、教育背景和已确认能力保持可读，未用空洞 slogan 替代事实。
+
 ### Timeline
 
-- Intro 不再使用整屏最小高度；标题、说明与时间轴在同一视口内形成连续阅读关系。
-- 标题在 `1062px` 宽度保持单行，字号约 `60px`，没有神秘断行。
-- 教育与项目按同一组年份生成行；`2020 / 2024 / 2025 / 2026` 共享一条纵轴、同一圆点坐标和相等的年度行高。
-- 年份只渲染一次，entry 内不再重复隐藏或占位日期。
+- 时间轴改为偏左的纵向手绘路径，教育经历位于左侧，项目、比赛与实习位于右侧。
+- `2020 / 2024 / 2025 / 2026` 年份节点共享同一条路径；彩色圆点与曲线代替刚性表格线。
+- 时间与内容按同一年度行对齐，右栏获得更多宽度；移动端在 `760px` 以下切为单栏且保留年份节点。
 
-### MacBook 与滚动
+### MacBook 舞台与导航
 
-- 文件夹打开仍从所选文件夹原点进行圆形揭示；随后屏幕连续扩展到 Work 舞台，外框淡出。关闭时按反方向收回。
-- 项目切换继续使用带方向的位移与淡入，不瞬切内容。
-- 打开项目后屏幕占满舞台宽度；MacBook 边框不再长期挤压项目内容。
-- 红黄绿按钮使用 `18px` 中心间距与 `10px` 圆点，接近 macOS 窗口密度，三点等距。
-- 鼠标在屏幕区域内滚动时，项目内容从首屏移动到证书末尾；鼠标移到屏幕外侧滚动时，外层页面移动到项目导航与事实条。
-- 浏览器标题位于左侧安全区，不再与设备刘海重叠。
+- 下滑进入 Work 时开盖；从 Work 上滑离开后 `.is-open` 被移除，再返回 Work 时恢复，合盖与开盖状态均已实测。
+- 文件夹打开从点击原点揭示，随后项目内容扩展到阅读舞台；打开、关闭和项目切换均保留过渡。
+- 项目页层级高于设备外框，转场中不再出现内容穿过边框的穿模。
+- 屏幕内滚轮滚动项目内容；屏幕外滚轮滚动整页。Ganttodo iframe 默认不截获滚轮，点击“进入交互”后才接收指针。
+- 红黄绿按钮使用 `18px` 中心间距和 `10px` 圆点；标题位于左侧安全区，不与刘海重叠。
+- 桌面右下角说明已删除；概览卡片项目标题大于描述文字。
 
 ### 四个项目
 
-- 阿里云：首屏呈现两条工作主线，事实与“已确认 / 公开概念 / 待实施”边界保留，未新增未经确认的指标。
-- 智谱：`4 家单位 / 5 个大屏 / 14 个页面 / 3 类 AI 能力`形成事实带；工作流画布已移动到问题与职责之前，并在首屏露出节点。
-- 智能缺陷：16:9 视频成为首屏主体；分类、分割、语义、检索是可点击的视频章节；职责与验证变成横向证据条；奖状保留在页面末尾。
-- Smart Ganttodo：体验区固定 16:9；iframe 使用 `1280 × 720` 逻辑画布并按容器宽度等比缩放，当前截图中没有拉伸、裁成竖屏或与解释栏抢宽。
-- 四个项目标题和摘要已改为一个结论 + 一句上下文，不再重复完整 case-study 模板。
+- 阿里云：两条工作主线、确认状态和公开边界保持不变；页面可在屏幕区域内完整滚动。
+- 智谱：仅保留事实带、核心工作流和职责边界。点击任一节点会将其移动到说明面板之外的可视中心；实测 `N5-3` 节点中心与可视区域中心差值为 `0px`。`N1 / N5 / N5-1 / N5-3` 展示来自本地资料的脱敏 Prompt Blueprint，不包含客户材料或完整内部提示词。
+- 智能缺陷：视频仍为核心证据；分类、分割、语义和检索改为并行能力矩阵，不再模拟时间顺序或视频跳转；结论文案改为“四个模型，并行产出辅助证据。”；证书保留在页尾。
+- Smart Ganttodo：默认尝试加载在线体验，失败退化到静态预览；iframe 使用 `1280 × 720` 逻辑画布并按 16:9 容器等比缩放。静态图来自真实页面并包含三条日程；重复链路说明已替换为四步进度组件。
 
-### 响应式、可访问性与控制台
+### 构建、响应式与可访问性
 
-- 当前 in-app Browser 的 viewport override 未改变宿主物理视口，因此本轮没有伪造 `390px` 新截图；移动端继续沿用已有断点和上一轮 `390 × 844` 基线，新增事实带、工作流标题、证据条与体验说明均在 `760px` 下切成单栏或两列。
-- `1062 × 582` 实测 `documentElement.scrollWidth - innerWidth == 0`。
-- Enter 可从 Cover 进入；项目按钮、工作流节点、视频章节、关闭按钮均保持键盘语义。
-- `prefers-reduced-motion` 下屏幕、外框、项目和工作流动画均关闭或降级。
-- 最终浏览器控制台没有 error 或 warning。
+- `npm run build` 通过，Vite 完成 51 个模块构建。
+- `git diff --check` 通过。
+- `1062 × 752` 与 `1280 × 720` 实测未发现横向溢出、遮挡节点、标题与设备框重叠或屏内滚动失效。
+- Cover Enter、项目按钮、窗口关闭、工作流节点、体验切换与外链均保留原生键盘语义和可见焦点。
+- `prefers-reduced-motion` 下保留已有降级规则。
 
 ## 视觉判断
 
-- Timeline 对照中，原来的空白被共享时间轴占用，信息密度增加但仍有清晰段落间距。
-- 缺陷项目对照中，视频从窄栏放大为首屏主体。
-- Ganttodo 对照中，真实网页从半宽裁切改为标准横屏画幅。
-- 智谱对照中，通用目录与问题段落被可操作工作流和项目事实替代。
-- 未发现新的 P0、P1 或 P2 视觉/交互问题。
+- Cover 对照中，虚线轮廓从“包住票根并压到说明”修正为贴合存根的独立交互边界。
+- About 对照中，正文缩短、信息被方法条和能力色线分层，仍保留可验证内容。
+- Timeline 不再像表格；年份、左右经历和手绘路径形成一条连续叙事。
+- 四个项目分别以工作流、视频与能力矩阵、真实网页、数据库产品地图作为首要证据，没有复用同一套 case-study 版式。
+- 未发现新的 P0、P1 或 P2 视觉与交互问题。
 
 final result: passed

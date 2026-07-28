@@ -15,31 +15,28 @@
           playsinline
           preload="metadata"
           aria-label="智能缺陷分析系统一分钟演示视频"
-          @durationchange="syncDuration"
-          @timeupdate="syncProgress"
         >
           当前浏览器不支持视频播放。下方文字仍可完整了解系统。
         </video>
 
-        <nav class="output-index" aria-label="演示视频输出阶段">
-          <button
-            v-for="(stage, index) in stages"
-            :key="stage.label"
-            type="button"
-            :class="{ 'is-active': activeStageIndex === index }"
-            :aria-current="activeStageIndex === index ? 'step' : undefined"
-            @click="seekTo(index)"
-          >
-            <span>{{ String(index + 1).padStart(2, '0') }}</span>
-            <strong>{{ stage.label }}</strong>
-            <small>{{ stage.caption }}</small>
-          </button>
-        </nav>
+        <section class="output-map" aria-label="并行调用的四模型能力矩阵">
+          <header>
+            <p>PARALLEL CAPABILITY MAP</p>
+            <span>同一次分析，并行产出四类辅助信息</span>
+          </header>
+          <div>
+            <article v-for="(stage, index) in stages" :key="stage.label">
+              <span>{{ String(index + 1).padStart(2, '0') }}</span>
+              <strong>{{ stage.label }}</strong>
+              <small>{{ stage.caption }}</small>
+            </article>
+          </div>
+        </section>
       </div>
 
       <aside class="result-note">
         <p>ENGINEER-IN-THE-LOOP</p>
-        <h4>四个结果，不替工程师下结论。</h4>
+        <h4>四个模型，并行产出辅助证据。</h4>
         <span>{{ project.boundary }}</span>
         <dl>
           <div>
@@ -70,13 +67,11 @@
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { projects } from '../../data/portfolio.js'
 
 const project = projects.defect
 const videoRef = ref(null)
-const duration = ref(0)
-const currentTime = ref(0)
 
 const stages = [
   { label: '分类', caption: '识别缺陷类别' },
@@ -84,32 +79,6 @@ const stages = [
   { label: '语义', caption: '组织形貌描述' },
   { label: '检索', caption: '返回历史相似案例' },
 ]
-
-const activeStageIndex = computed(() => {
-  if (!duration.value) return 0
-  return Math.min(
-    stages.length - 1,
-    Math.floor((currentTime.value / duration.value) * stages.length),
-  )
-})
-
-function syncDuration() {
-  duration.value = Number.isFinite(videoRef.value?.duration)
-    ? videoRef.value.duration
-    : 0
-}
-
-function syncProgress() {
-  currentTime.value = videoRef.value?.currentTime || 0
-}
-
-function seekTo(index) {
-  const video = videoRef.value
-  if (!video || !Number.isFinite(video.duration)) return
-
-  video.currentTime = (video.duration * index) / stages.length
-  currentTime.value = video.currentTime
-}
 
 onBeforeUnmount(() => {
   const video = videoRef.value
@@ -190,59 +159,63 @@ video {
   box-shadow: 0 1.2rem 2.5rem rgba(37, 41, 39, 0.16);
 }
 
-.output-index {
+.output-map {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.7rem;
   margin-top: 1rem;
-  border-top: 1px solid rgba(37, 41, 39, 0.2);
 }
 
-.output-index button {
+.output-map > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.output-map > header p {
+  margin: 0;
+  color: #687d74;
+  font: 800 0.62rem/1.2 var(--font-sans, sans-serif);
+  letter-spacing: 0.13em;
+}
+
+.output-map > header span {
+  color: #68716d;
+  font-size: 0.72rem;
+}
+
+.output-map > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.output-map article {
   display: grid;
   min-width: 0;
   gap: 0.24rem;
-  padding: 0.9rem 0.55rem 0.85rem;
-  border: 0;
-  border-right: 1px solid rgba(37, 41, 39, 0.14);
-  background: transparent;
+  min-height: 5.6rem;
+  align-content: end;
+  padding: 0.8rem;
+  border-top: 3px solid #687d74;
+  background: rgba(104, 125, 116, 0.08);
   color: #5d6560;
   text-align: left;
-  cursor: pointer;
-  transition:
-    color 160ms ease,
-    background 160ms ease;
 }
 
-.output-index button:last-child {
-  border-right: 0;
-}
-
-.output-index button:hover,
-.output-index button.is-active {
-  color: #2d463c;
-  background: rgba(104, 125, 116, 0.09);
-}
-
-.output-index button:focus-visible {
-  outline: 2px solid #4d7061;
-  outline-offset: 3px;
-}
-
-.output-index button > span {
+.output-map article > span {
   font-size: 0.62rem;
   letter-spacing: 0.08em;
 }
 
-.output-index strong {
+.output-map strong {
+  color: #30463d;
   font-size: 0.82rem;
 }
 
-.output-index small {
-  overflow: hidden;
+.output-map small {
   font-size: 0.64rem;
   line-height: 1.35;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .result-note {
@@ -356,23 +329,15 @@ video {
     grid-column: auto;
   }
 
-  .output-index {
+  .output-map > div {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .output-index button:nth-child(2) {
-    border-right: 0;
-  }
-
-  .output-index button:nth-child(-n + 2) {
-    border-bottom: 1px solid rgba(37, 41, 39, 0.14);
-  }
-
-  .output-index strong {
+  .output-map strong {
     font-size: 0.9375rem;
   }
 
-  .output-index small {
+  .output-map small {
     font-size: 0.8125rem;
   }
 
@@ -391,9 +356,4 @@ video {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .output-index button {
-    transition: none;
-  }
-}
 </style>

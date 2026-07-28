@@ -45,17 +45,17 @@
           >
             <img src="/ticket-stub.svg" alt="" draggable="false" />
           </button>
-        </div>
 
-        <div class="stub-callout" :class="{ 'is-hidden': hideStubCallout }" aria-hidden="true">
-          <img class="stub-callout-box" src="/cover/Rectangle 7.png" alt="" draggable="false" />
-          <img class="stub-callout-vector" src="/cover/Vector 1.png" alt="" draggable="false" />
-          <img
-            class="stub-callout-text"
-            src="/cover/stub-callout-text.png"
-            alt=""
-            draggable="false"
-          />
+          <div class="stub-callout" :class="{ 'is-hidden': hideStubCallout }" aria-hidden="true">
+            <img class="stub-callout-box" src="/cover/Rectangle 7.png" alt="" draggable="false" />
+            <img class="stub-callout-vector" src="/cover/Vector 1.png" alt="" draggable="false" />
+            <img
+              class="stub-callout-text"
+              src="/cover/stub-callout-text.png"
+              alt=""
+              draggable="false"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -101,6 +101,24 @@
               </p>
             </div>
 
+            <ol class="profile-method" aria-label="产品工作方法">
+              <li>
+                <span>01</span>
+                <strong>DEFINE</strong>
+                <small>问题与用户任务</small>
+              </li>
+              <li>
+                <span>02</span>
+                <strong>DIVIDE</strong>
+                <small>模型与确定性流程</small>
+              </li>
+              <li>
+                <span>03</span>
+                <strong>PROTOTYPE</strong>
+                <small>原型与真实交互</small>
+              </li>
+            </ol>
+
             <dl class="profile-meta">
               <div v-for="item in profile.meta" :key="item.label">
                 <dt>{{ item.label }}</dt>
@@ -124,7 +142,7 @@
             <div class="capability-heading">
               <p class="section-kicker">CAPABILITY STACK</p>
               <h2 id="capability-title">判断、系统与落地</h2>
-              <p>AI 是手段。每项能力都要落回具体任务、边界与证据。</p>
+              <p>四组能力都对应项目里的具体任务、产品边界与交付证据。</p>
             </div>
 
             <ol class="capability-list">
@@ -532,21 +550,21 @@ onUnmounted(() => {
 }
 
 .stub-callout-box {
-  top: calc(50% - min(18.4vw, 235px));
-  right: max(-4px, calc((100vw - var(--ticket-width)) / 2 - 36px));
-  width: min(20.4vw, 260px);
+  top: 2.8%;
+  right: -1.4%;
+  width: 25.2%;
 }
 
 .stub-callout-vector {
-  top: calc(50% + min(12.5vw, 160px));
-  right: clamp(72px, 12vw, 154px);
-  width: min(11.8vw, 150px);
+  top: 90%;
+  right: 5.5%;
+  width: 13%;
 }
 
 .stub-callout-text {
-  top: calc(50% + min(16.4vw, 210px));
-  right: clamp(10px, 2.4vw, 32px);
-  width: min(11.4vw, 145px);
+  top: 108%;
+  right: -10.5%;
+  width: 16%;
 }
 
 .about-layer {
@@ -646,28 +664,77 @@ onUnmounted(() => {
 
 .about-intro h2 {
   max-width: 10ch;
-  font-size: clamp(42px, 4.3vw, 68px);
+  font-size: clamp(40px, 4vw, 62px);
   line-height: 1.02;
+}
+
+.about-intro h2:focus {
+  outline: none;
 }
 
 .intro-copy {
   display: grid;
-  gap: 14px;
+  gap: 10px;
   max-width: 600px;
-  margin-top: 36px;
+  margin-top: 28px;
 }
 
 .intro-copy p {
   margin: 0;
   color: #383a3a;
   font-size: clamp(15px, 1.15vw, 17px);
-  line-height: 1.75;
+  line-height: 1.68;
+}
+
+.profile-method {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 28px 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line);
+  list-style: none;
+}
+
+.profile-method li {
+  display: grid;
+  min-width: 0;
+  gap: 4px;
+  padding: 13px 10px 14px 0;
+}
+
+.profile-method li + li {
+  border-left: 1px solid var(--line);
+  padding-left: 12px;
+}
+
+.profile-method span,
+.profile-method strong,
+.profile-method small {
+  font-family: 'Manrope', 'Noto Sans SC', sans-serif;
+}
+
+.profile-method span {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.profile-method strong {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.profile-method small {
+  color: #4f5151;
+  font-size: 11px;
+  line-height: 1.35;
 }
 
 .profile-meta {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: 38px 0 0;
+  margin: 24px 0 0;
   border-top: 1px solid var(--line-strong);
 }
 
@@ -739,11 +806,23 @@ onUnmounted(() => {
 }
 
 .capability-list li {
+  position: relative;
   display: grid;
   grid-template-columns: 42px minmax(0, 1fr);
   gap: 14px;
   border-top: 1px solid var(--line-strong);
-  padding: 17px 0 18px;
+  padding: 17px 14px 18px;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.capability-list li:nth-child(1) { border-left: 3px solid #3659b8; }
+.capability-list li:nth-child(2) { border-left: 3px solid #d76b2c; }
+.capability-list li:nth-child(3) { border-left: 3px solid #d5a526; }
+.capability-list li:nth-child(4) { border-left: 3px solid #6d8b78; }
+
+.capability-list li:hover {
+  background: rgba(255, 255, 255, 0.38);
+  transform: translateX(4px);
 }
 
 .capability-list li > span {
@@ -828,21 +907,21 @@ onUnmounted(() => {
   }
 
   .stub-callout-box {
-    top: calc(50% - min(23vw, 147px));
-    right: -3px;
-    width: min(27.5vw, 176px);
+    top: 2.8%;
+    right: -1%;
+    width: 25.2%;
   }
 
   .stub-callout-vector {
-    top: calc(50% + min(17vw, 110px));
-    right: min(9.5vw, 61px);
-    width: min(15vw, 96px);
+    top: 91%;
+    right: 5%;
+    width: 14%;
   }
 
   .stub-callout-text {
-    top: calc(50% + min(23vw, 142px));
-    right: 10px;
-    width: min(17vw, 108px);
+    top: 112%;
+    right: -1%;
+    width: 18%;
   }
 
   .about-stage {
@@ -899,6 +978,16 @@ onUnmounted(() => {
     grid-template-columns: 1fr;
   }
 
+  .profile-method {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-method li + li {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+    padding-left: 0;
+  }
+
   .capability-page {
     border-top: 1px solid rgba(64, 58, 48, 0.18);
     padding: 50px 24px 36px;
@@ -925,6 +1014,7 @@ onUnmounted(() => {
 
 @media (prefers-reduced-motion: reduce) {
   .stub-callout,
+  .capability-list li,
   .profile-meta a,
   .about-layer {
     transition: none;

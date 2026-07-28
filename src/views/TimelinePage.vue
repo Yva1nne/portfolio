@@ -13,18 +13,24 @@
     </header>
 
     <div class="timeline-layout" aria-label="按年份排列的教育与项目双栏时间轴">
+      <img
+        class="timeline-thread"
+        src="/timeline/timeline-thread.png"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+      >
+
       <header class="timeline-columns">
-        <p class="timeline-axis-label">YEAR</p>
         <div
           v-for="lane in timelineLanes"
           :key="lane.id"
           class="timeline-lane__header"
+          :class="`timeline-lane__header--${lane.id}`"
         >
-          <span>{{ lane.number }}</span>
-          <div>
-            <p>{{ lane.kicker }}</p>
-            <h3 :id="`timeline-lane-${lane.id}`">{{ lane.title }}</h3>
-          </div>
+          <span>{{ lane.number }} / {{ lane.kicker }}</span>
+          <h3 :id="`timeline-lane-${lane.id}`">{{ lane.title }}</h3>
         </div>
       </header>
 
@@ -32,13 +38,9 @@
         v-for="group in timelineGroups"
         :key="group.year"
         class="timeline-year-row"
+        :style="{ '--year-accent': group.accent }"
         :aria-labelledby="`timeline-year-${group.year}`"
       >
-        <header class="timeline-year-marker">
-          <time :id="`timeline-year-${group.year}`">{{ group.year }}</time>
-          <span aria-hidden="true"></span>
-        </header>
-
         <div
           v-for="lane in timelineLanes"
           :key="lane.id"
@@ -63,6 +65,11 @@
             />
           </div>
         </div>
+
+        <header class="timeline-year-marker">
+          <span aria-hidden="true"></span>
+          <time :id="`timeline-year-${group.year}`">{{ group.year }}</time>
+        </header>
       </section>
     </div>
   </section>
@@ -96,9 +103,12 @@ const timelineLanes = computed(() => [
   },
 ])
 
+const timelineAccents = ['#3659b8', '#d76b2c', '#d5a526', '#6d8b78']
+
 const timelineGroups = computed(() => (
-  [...new Set(timelineItems.map((item) => item.year))].map((year) => ({
+  [...new Set(timelineItems.map((item) => item.year))].map((year, index) => ({
     year,
+    accent: timelineAccents[index % timelineAccents.length],
     education: timelineItems.filter((item) => item.year === year && item.category === 'education'),
     project: timelineItems.filter((item) => item.year === year && item.category === 'project'),
   }))
@@ -235,6 +245,10 @@ onBeforeUnmount(() => {
 }
 
 .timeline-layout {
+  --timeline-axis: clamp(88px, 9vw, 122px);
+  --timeline-left: 31%;
+
+  position: relative;
   max-width: 1180px;
   margin: 0 auto;
   padding-top: clamp(52px, 8vh, 88px);
@@ -243,51 +257,41 @@ onBeforeUnmount(() => {
 .timeline-columns,
 .timeline-year-row {
   display: grid;
-  grid-template-columns: clamp(58px, 7vw, 76px) repeat(2, minmax(0, 1fr));
+  grid-template-columns: var(--timeline-left) var(--timeline-axis) minmax(0, 1fr);
 }
 
 .timeline-columns {
-  border-top: 2px solid var(--ink);
-  border-bottom: 1px solid var(--line-strong);
-}
-
-.timeline-axis-label,
-.timeline-lane__header {
-  min-width: 0;
-  min-height: 96px;
-  margin: 0;
-  padding: 18px clamp(14px, 2.4vw, 28px) 22px;
-}
-
-.timeline-axis-label {
-  border-right: 1px solid var(--line-strong);
-  color: var(--muted);
-  font: 800 9px/1.2 'Manrope', 'Noto Sans SC', sans-serif;
-  letter-spacing: 0.14em;
+  position: relative;
+  z-index: 2;
+  align-items: end;
+  margin-bottom: 18px;
 }
 
 .timeline-lane__header {
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
-  gap: 10px;
-  align-items: start;
+  gap: 7px;
+  min-width: 0;
+  padding-bottom: 16px;
 }
 
-.timeline-lane__header + .timeline-lane__header {
-  border-left: 1px solid var(--line-strong);
+.timeline-lane__header--education {
+  grid-column: 1;
+  justify-items: end;
+  padding-right: 28px;
+  text-align: right;
 }
 
-.timeline-lane__header > span,
-.timeline-lane__header p {
+.timeline-lane__header--project {
+  grid-column: 3;
+  padding-left: 34px;
+}
+
+.timeline-lane__header > span {
   color: var(--muted);
   font-family: 'Manrope', 'Noto Sans SC', sans-serif;
   font-size: 9px;
   font-weight: 800;
   letter-spacing: 0.12em;
-}
-
-.timeline-lane__header p {
-  margin: 0 0 6px;
 }
 
 .timeline-lane__header h3 {
@@ -296,52 +300,98 @@ onBeforeUnmount(() => {
 }
 
 .timeline-year-row {
-  border-bottom: 1px solid var(--line-strong);
+  position: relative;
+  z-index: 2;
+  align-items: start;
+  min-height: 250px;
+  padding: clamp(28px, 4.5vh, 52px) 0;
 }
 
 .timeline-year-marker {
   position: relative;
-  min-height: 100%;
-  border-right: 1px solid var(--line-strong);
-  padding: 28px 12px 28px 0;
+  grid-column: 2;
+  grid-row: 1;
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding-top: 8px;
 }
 
 .timeline-year-marker time {
-  display: block;
-  color: var(--muted);
+  color: var(--ink);
   font: 800 11px/1.2 'Manrope', 'Noto Sans SC', sans-serif;
   letter-spacing: 0.08em;
 }
 
 .timeline-year-marker span {
-  position: absolute;
-  top: 31px;
-  right: -5px;
-  width: 9px;
-  height: 9px;
-  border: 1px solid var(--ink);
+  width: 17px;
+  height: 17px;
+  border: 4px solid var(--bg);
   border-radius: 50%;
-  background: var(--bg);
+  background: var(--year-accent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--year-accent) 70%, var(--ink));
 }
 
 .timeline-year-lane {
+  display: grid;
+  gap: 26px;
   min-width: 0;
 }
 
+.timeline-year-lane--education {
+  grid-column: 1;
+  grid-row: 1;
+  padding-right: 28px;
+}
+
 .timeline-year-lane--project {
-  border-left: 1px solid var(--line-strong);
+  grid-column: 3;
+  grid-row: 1;
+  padding-left: 34px;
 }
 
 .timeline-year-lane__label {
   display: none;
 }
 
-.timeline-entry-shell + .timeline-entry-shell {
-  border-top: 1px solid var(--line-strong);
-}
-
 .timeline-entry-shell {
   min-width: 0;
+}
+
+.timeline-year-lane--education :deep(.timeline-entry) {
+  text-align: right;
+}
+
+.timeline-year-lane--education :deep(.timeline-entry__header) {
+  justify-content: flex-end;
+}
+
+.timeline-year-lane--education :deep(.timeline-entry__body) {
+  margin-left: auto;
+}
+
+.timeline-year-lane--education :deep(.timeline-entry__evidence li) {
+  padding-right: 17px;
+  padding-left: 0;
+}
+
+.timeline-year-lane--education :deep(.timeline-entry__evidence li::before) {
+  right: 0;
+  left: auto;
+}
+
+.timeline-thread {
+  position: absolute;
+  z-index: 1;
+  top: 106px;
+  bottom: 12px;
+  left: calc(var(--timeline-left) + var(--timeline-axis) / 2);
+  width: min(86px, var(--timeline-axis));
+  height: calc(100% - 118px);
+  object-fit: fill;
+  opacity: 0.82;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 @media (max-width: 760px) {
@@ -367,6 +417,9 @@ onBeforeUnmount(() => {
   }
 
   .timeline-layout {
+    --timeline-axis: 42px;
+    --timeline-left: 0px;
+
     padding-top: 52px;
   }
 
@@ -375,30 +428,31 @@ onBeforeUnmount(() => {
   }
 
   .timeline-year-row {
-    grid-template-columns: 48px minmax(0, 1fr);
+    grid-template-columns: var(--timeline-axis) minmax(0, 1fr);
+    padding: 24px 0 34px;
   }
 
   .timeline-year-marker {
+    grid-column: 1;
     grid-row: 1 / span 2;
-    padding-top: 24px;
+    justify-items: start;
+    padding-top: 8px;
   }
 
   .timeline-year-marker time {
     font-size: 9px;
-    writing-mode: vertical-rl;
-  }
-
-  .timeline-year-marker span {
-    top: 27px;
+    font-size: 9px;
   }
 
   .timeline-year-lane {
     grid-column: 2;
+    padding-right: 0;
+    padding-left: 16px;
   }
 
   .timeline-year-lane--project {
-    border-top: 1px solid var(--line-strong);
-    border-left: 0;
+    grid-row: 2;
+    margin-top: 22px;
   }
 
   .timeline-year-lane:empty,
@@ -409,10 +463,37 @@ onBeforeUnmount(() => {
   .timeline-year-lane__label {
     display: block;
     margin: 0;
-    padding: 14px 18px 0;
+    padding: 0 0 8px;
     color: var(--muted);
     font: 800 9px/1.2 'Manrope', 'Noto Sans SC', sans-serif;
     letter-spacing: 0.12em;
+  }
+
+  .timeline-year-lane--education :deep(.timeline-entry),
+  .timeline-year-lane--education :deep(.timeline-entry__header) {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .timeline-year-lane--education :deep(.timeline-entry__body) {
+    margin-left: 0;
+  }
+
+  .timeline-year-lane--education :deep(.timeline-entry__evidence li) {
+    padding-right: 0;
+    padding-left: 17px;
+  }
+
+  .timeline-year-lane--education :deep(.timeline-entry__evidence li::before) {
+    right: auto;
+    left: 0;
+  }
+
+  .timeline-thread {
+    top: 48px;
+    left: 18px;
+    width: 34px;
+    height: calc(100% - 54px);
   }
 }
 </style>

@@ -411,13 +411,15 @@ onBeforeUnmount(() => {
 }
 
 .project-copy.is-overview li strong {
-  font-size: 0.75rem;
+  color: #191b1b;
+  font-size: 1rem;
+  line-height: 1.35;
 }
 
 .project-copy.is-overview li span,
 .project-copy small {
   color: rgba(25, 27, 27, 0.58);
-  font-size: 0.9375rem;
+  font-size: 0.875rem;
   line-height: 1.55;
 }
 

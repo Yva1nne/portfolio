@@ -55,8 +55,6 @@
                 <strong>{{ project.folderName }}</strong>
               </button>
             </div>
-
-            <p class="desktop-hint">打开任意文件夹 · 四个项目同级</p>
           </div>
 
           <div
@@ -148,7 +146,7 @@ watch(() => props.activeProject?.id, (nextId, previousId) => {
   projectSlideDirection.value = projectOrder.indexOf(nextId) < projectOrder.indexOf(previousId)
     ? 'backward'
     : 'forward'
-  pendingFocusTarget = { type: 'close' }
+  pendingFocusTarget = null
 })
 
 function updateClock() {
@@ -192,7 +190,7 @@ function openProject(projectId, event) {
     folderOrigin.y = `${((folderRect.top + folderRect.height / 2 - rect.top) / rect.height) * 100}%`
   }
 
-  pendingFocusTarget = { type: 'close' }
+  pendingFocusTarget = event?.detail === 0 ? { type: 'close' } : null
   emit('select', projectId)
 }
 
@@ -232,9 +230,17 @@ onMounted(() => {
   }
 
   entryObserver = new IntersectionObserver(([entry]) => {
-    if (!entry?.isIntersecting) return
-    isOpen.value = true
-    entryObserver?.disconnect()
+    if (!entry) return
+
+    if (entry.isIntersecting) {
+      isOpen.value = true
+      return
+    }
+
+    const viewportBottom = entry.rootBounds?.bottom || window.innerHeight
+    if (entry.boundingClientRect.top > viewportBottom * 0.55) {
+      isOpen.value = false
+    }
   }, { threshold: 0.18 })
 
   if (workspaceRoot.value) entryObserver.observe(workspaceRoot.value)
@@ -278,7 +284,7 @@ onBeforeUnmount(() => {
   position: absolute;
   top: 7.85%;
   left: 12.15%;
-  z-index: 1;
+  z-index: 4;
   width: 75.55%;
   height: 77.7%;
   overflow: hidden;
@@ -296,7 +302,7 @@ onBeforeUnmount(() => {
 .macbook-frame {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 2;
   display: block;
   width: 100%;
   height: 100%;
@@ -435,17 +441,6 @@ onBeforeUnmount(() => {
   line-height: 1.3;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.desktop-hint {
-  position: absolute;
-  right: 18px;
-  bottom: 14px;
-  margin: 0;
-  color: rgba(255, 255, 255, 0.84);
-  font: 600 9px/1.2 var(--font-sans, sans-serif);
-  letter-spacing: 0.08em;
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
 }
 
 .project-window {
@@ -623,12 +618,6 @@ onBeforeUnmount(() => {
 
   .desktop-folder strong {
     max-width: 86px;
-    font-size: 6px;
-  }
-
-  .desktop-hint {
-    right: 8px;
-    bottom: 6px;
     font-size: 6px;
   }
 

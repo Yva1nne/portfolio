@@ -14,6 +14,13 @@
             {{ frameStatus }}
           </span>
           <div>
+            <button
+              v-if="frameState === 'online'"
+              type="button"
+              @click="iframeInteractive = !iframeInteractive"
+            >
+              {{ iframeInteractive ? '退出交互' : '进入交互' }}
+            </button>
             <button type="button" @click="toggleExperienceMode">
               {{ experienceActionLabel }}
             </button>
@@ -33,6 +40,7 @@
             v-if="!showStaticPreview"
             :src="project.demoUrl"
             :style="frameStyle"
+            :class="{ 'is-interactive': iframeInteractive }"
             title="Smart Ganttodo 在线体验"
             loading="lazy"
             referrerpolicy="no-referrer"
@@ -40,10 +48,16 @@
             @error="showFallback('error')"
           ></iframe>
 
-          <div
-            v-else
-            class="iframe-fallback"
+          <button
+            v-if="!showStaticPreview && frameState === 'online' && !iframeInteractive"
+            type="button"
+            class="interaction-shield"
+            @click="iframeInteractive = true"
           >
+            点击进入在线体验
+          </button>
+
+          <div v-if="showStaticPreview" class="iframe-fallback">
             <img
               src="/project/ganttodo-preview.png"
               alt="Smart Ganttodo 日历与甘特任务界面预览"
@@ -61,24 +75,19 @@
       <aside class="example-flow">
         <header>
           <p>ONE INPUT, STRUCTURED CONTROL</p>
-          <h4>一句话 → actions → 甘特图 → 拖拽修正</h4>
         </header>
+
+        <ol class="flow-progress" aria-label="从自然语言到可编辑甘特图的四步产品链路">
+          <li v-for="step in flowSteps" :key="step.number">
+            <span>{{ step.number }}</span>
+            <strong>{{ step.title }}</strong>
+            <small>{{ step.detail }}</small>
+          </li>
+        </ol>
 
         <div class="example-block">
           <span>示例输入</span>
           <blockquote>“下周一开始做作品集改版，周三前完成页面，周五前完成验收。”</blockquote>
-        </div>
-
-        <div class="flow-line" aria-label="核心产品链路">
-          <span>自然语言</span>
-          <i>→</i>
-          <span>多意图</span>
-          <i>→</i>
-          <span>actions</span>
-          <i>→</i>
-          <span>Gantt</span>
-          <i>→</i>
-          <span>拖拽</span>
         </div>
 
         <details>
@@ -102,10 +111,17 @@ import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import { projects } from '../../data/portfolio.js'
 
 const project = projects.ganttodo
+const flowSteps = [
+  { number: '01', title: '解析', detail: '识别一句话里的多个任务' },
+  { number: '02', title: '结构化', detail: '输出可执行 actions' },
+  { number: '03', title: '排期', detail: '写入 Gantt state' },
+  { number: '04', title: '修正', detail: '拖拽调整任务时间' },
+]
 const experienceViewport = ref(null)
 const showStaticPreview = ref(true)
 const frameState = ref('static')
 const frameScale = ref(1)
+const iframeInteractive = ref(false)
 let frameTimeout = null
 let frameController = null
 let frameAttempt = 0
@@ -187,6 +203,7 @@ function showFallback(reason = 'manual') {
   clearFrameRequest()
   frameState.value = reason === 'manual' ? 'static' : 'error'
   showStaticPreview.value = true
+  iframeInteractive.value = false
 }
 
 function toggleExperienceMode() {
@@ -213,6 +230,7 @@ onMounted(() => {
   syncFrameScale()
   viewportObserver = new ResizeObserver(syncFrameScale)
   if (experienceViewport.value) viewportObserver.observe(experienceViewport.value)
+  showOnlineExperience()
 })
 
 onBeforeUnmount(() => {
@@ -257,9 +275,10 @@ onBeforeUnmount(() => {
 }
 
 .project-lead h3 {
-  max-width: 20ch;
+  max-width: none;
   font-size: clamp(1.35rem, 2vw, 1.9rem);
   line-height: 1.08;
+  white-space: nowrap;
 }
 
 .project-lead > span {
@@ -362,6 +381,27 @@ onBeforeUnmount(() => {
   border: 0;
   background: #171717;
   transform-origin: 0 0;
+  pointer-events: none;
+}
+
+.iframe-viewport iframe.is-interactive {
+  pointer-events: auto;
+}
+
+.interaction-shield {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  z-index: 2;
+  min-height: 2.25rem;
+  border: 1px solid rgba(247, 245, 240, 0.5);
+  border-radius: 999px;
+  padding: 0 0.9rem;
+  background: rgba(23, 23, 23, 0.78);
+  color: #f7f5f0;
+  font: 700 0.68rem/1 var(--font-sans, sans-serif);
+  cursor: pointer;
+  backdrop-filter: blur(8px);
 }
 
 .iframe-fallback {
@@ -413,7 +453,7 @@ onBeforeUnmount(() => {
 .example-flow {
   display: grid;
   min-width: 0;
-  grid-template-columns: minmax(14rem, 0.75fr) minmax(16rem, 1fr) minmax(18rem, 1.25fr);
+  grid-template-columns: minmax(14rem, 0.8fr) minmax(0, 1.2fr);
   gap: 1rem clamp(1rem, 2.4vw, 2.2rem);
   align-items: start;
   padding-top: 1rem;
@@ -422,6 +462,7 @@ onBeforeUnmount(() => {
 
 .example-flow > header {
   display: grid;
+  grid-column: 1 / -1;
   gap: 0.65rem;
 }
 
@@ -449,18 +490,8 @@ onBeforeUnmount(() => {
   line-height: 1.65;
 }
 
-.flow-line {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  align-items: center;
-  color: #5d5563;
-  font-size: 0.65rem;
-}
-
 .example-flow details {
-  grid-column: 3;
-  grid-row: 1 / span 3;
+  grid-column: 2;
   border-left: 1px solid rgba(42, 39, 46, 0.16);
   padding-left: clamp(1rem, 2vw, 1.8rem);
 }
@@ -473,14 +504,54 @@ onBeforeUnmount(() => {
   cursor: pointer;
 }
 
-.flow-line span {
-  padding-bottom: 0.18rem;
-  border-bottom: 1px solid rgba(120, 106, 143, 0.5);
+.flow-progress {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid rgba(120, 106, 143, 0.55);
+  list-style: none;
 }
 
-.flow-line i {
-  color: #9b929f;
-  font-style: normal;
+.flow-progress li {
+  position: relative;
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+  padding: 0.8rem 0.75rem 0.7rem;
+  border-right: 1px solid rgba(42, 39, 46, 0.14);
+}
+
+.flow-progress li:last-child {
+  border-right: 0;
+}
+
+.flow-progress li::before {
+  position: absolute;
+  top: -3px;
+  left: 0;
+  width: 40%;
+  height: 3px;
+  background: #786a8f;
+  content: '';
+}
+
+.flow-progress span {
+  color: #786a8f;
+  font: 800 0.6rem/1 var(--font-sans, sans-serif);
+  letter-spacing: 0.08em;
+}
+
+.flow-progress strong {
+  color: #3f3944;
+  font-size: 0.82rem;
+}
+
+.flow-progress small {
+  color: #746e77;
+  font-size: 0.7rem;
+  line-height: 1.4;
 }
 
 pre {
@@ -496,7 +567,8 @@ pre {
 }
 
 .boundary {
-  grid-column: 1 / 3;
+  grid-column: 1 / -1;
+  max-width: none;
   color: #746e77 !important;
   font: 400 0.875rem/1.65 var(--font-sans, sans-serif) !important;
   letter-spacing: 0 !important;
@@ -509,6 +581,10 @@ pre {
 
   .project-lead {
     grid-template-columns: 1fr;
+  }
+
+  .project-lead h3 {
+    white-space: normal;
   }
 
   .project-lead > p {
@@ -551,6 +627,18 @@ pre {
 
   .example-flow {
     grid-template-columns: 1fr;
+  }
+
+  .flow-progress {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .flow-progress li:nth-child(2) {
+    border-right: 0;
+  }
+
+  .flow-progress li:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(42, 39, 46, 0.14);
   }
 
   .example-flow details,
